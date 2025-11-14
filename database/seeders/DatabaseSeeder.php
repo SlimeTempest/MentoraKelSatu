@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -26,5 +27,11 @@ class DatabaseSeeder extends Seeder
                 'is_suspended' => false,
             ]
         );
+
+        $defaultCategories = ['Penulisan', 'Desain', 'Pemrograman', 'Penelitian'];
+
+        foreach ($defaultCategories as $categoryName) {
+            Category::firstOrCreate(['name' => $categoryName]);
+        }
     }
 }

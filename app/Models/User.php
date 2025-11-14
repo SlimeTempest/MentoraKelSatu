@@ -52,4 +52,21 @@ class User extends Authenticatable
             'is_suspended' => 'boolean',
         ];
     }
+
+    public function jobsCreated()
+    {
+        return $this->hasMany(Job::class, 'created_by', 'user_id');
+    }
+
+    public function jobsAssigned()
+    {
+        return $this->hasMany(Job::class, 'assigned_to', 'user_id');
+    }
+
+    public function activeAssignmentsCount(): int
+    {
+        return $this->jobsAssigned()
+            ->where('status', Job::STATUS_PROGRESS)
+            ->count();
+    }
 }

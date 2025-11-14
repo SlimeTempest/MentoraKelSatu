@@ -3,7 +3,8 @@
         <a href="/" class="text-xl font-semibold text-indigo-600">MentoraKelSatu</a>
         <nav class="flex items-center gap-4 text-sm font-medium text-gray-700">
             @auth
-                <a href="/dashboard" class="hover:text-indigo-600">Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="hover:text-indigo-600">Dashboard</a>
+                <a href="{{ route('jobs.index') }}" class="hover:text-indigo-600">Job</a>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="rounded bg-indigo-600 px-3 py-1.5 text-white hover:bg-indigo-500">

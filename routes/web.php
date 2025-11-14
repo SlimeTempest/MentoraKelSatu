@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JobAssignmentController;
+use App\Http\Controllers\JobController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +25,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::view('/dashboard', 'dashboard')->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::resource('jobs', JobController::class)->except(['show']);
+    Route::post('jobs/{job}/take', [JobAssignmentController::class, 'take'])->name('jobs.take');
+    Route::post('jobs/{job}/complete', [JobAssignmentController::class, 'complete'])->name('jobs.complete');
 });
