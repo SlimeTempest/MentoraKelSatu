@@ -22,6 +22,48 @@
     </main>
 
     @include('layouts.partials.footer')
+
+    <script>
+        // Custom confirm function untuk mengganti browser alert
+        function customConfirm(message, callback) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
+            modal.style.cssText = 'display: flex; background-color: rgba(0, 0, 0, 0.3);';
+            modal.innerHTML = `
+                <div class="mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl" style="z-index: 51;">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">Konfirmasi</h3>
+                    <p class="mb-6 text-sm text-gray-600">${message}</p>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" class="cancel-btn rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Batal
+                        </button>
+                        <button type="button" class="confirm-btn rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">
+                            Ya
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            modal.querySelector('.confirm-btn').onclick = function() {
+                document.body.removeChild(modal);
+                if (callback) callback(true);
+            };
+            
+            modal.querySelector('.cancel-btn').onclick = function() {
+                document.body.removeChild(modal);
+                if (callback) callback(false);
+            };
+            
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                    if (callback) callback(false);
+                }
+            };
+        }
+    </script>
 </body>
 </html>
 

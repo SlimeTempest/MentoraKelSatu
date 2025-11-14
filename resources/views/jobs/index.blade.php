@@ -92,10 +92,10 @@
                                                     <a href="{{ route('jobs.edit', $job) }}" class="rounded border border-gray-300 px-2 py-1 text-gray-700 hover:bg-gray-50">Edit</a>
                                                 @endcan
                                                 @can('delete', $job)
-                                                    <form action="{{ route('jobs.destroy', $job) }}" method="POST" onsubmit="return confirm('Hapus job ini?')" class="inline">
+                                                    <form id="delete-form-{{ $job->job_id }}" action="{{ route('jobs.destroy', $job) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="rounded border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50">Hapus</button>
+                                                        <button type="button" onclick="customConfirm('Hapus job ini?', function(confirmed) { if(confirmed) document.getElementById('delete-form-{{ $job->job_id }}').submit(); })" class="rounded border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50">Hapus</button>
                                                     </form>
                                                 @endcan
                                                 @if ($job->status === \App\Models\Job::STATUS_PROGRESS)
@@ -197,10 +197,10 @@
                                                     <a href="{{ route('jobs.edit', $job) }}" class="rounded border border-gray-300 px-2 py-1 text-gray-700 hover:bg-gray-50">Edit</a>
                                                 @endcan
                                                 @can('delete', $job)
-                                                    <form action="{{ route('jobs.destroy', $job) }}" method="POST" onsubmit="return confirm('Hapus job ini?')">
+                                                    <form id="delete-form-user-{{ $job->job_id }}" action="{{ route('jobs.destroy', $job) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="rounded border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50">Hapus</button>
+                                                        <button type="button" onclick="customConfirm('Hapus job ini?', function(confirmed) { if(confirmed) document.getElementById('delete-form-user-{{ $job->job_id }}').submit(); })" class="rounded border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50">Hapus</button>
                                                     </form>
                                                 @endcan
                                             </div>

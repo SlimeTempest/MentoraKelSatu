@@ -55,21 +55,32 @@ class JobController extends Controller
         }
 
         $data = $this->validateJob($request);
+        $user = $request->user();
 
-        DB::transaction(function () use ($request, $data) {
+        // Validasi saldo cukup
+        if ($user->balance < $data['price']) {
+            return back()->withErrors([
+                'price' => 'Saldo Anda tidak cukup. Saldo saat ini: Rp ' . number_format($user->balance, 0, ',', '.') . '. Topup saldo terlebih dahulu.',
+            ])->withInput();
+        }
+
+        DB::transaction(function () use ($request, $data, $user) {
             $job = Job::create([
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'deadline' => $data['deadline'] ?? null,
                 'price' => $data['price'],
-                'created_by' => $request->user()->user_id,
+                'created_by' => $user->user_id,
                 'status' => Job::STATUS_PENDING,
             ]);
 
             $job->categories()->sync($data['categories'] ?? []);
+
+            // Potong saldo user
+            $user->decrement('balance', $data['price']);
         });
 
-        return redirect()->route('jobs.index')->with('status', 'Job berhasil dibuat.');
+        return redirect()->route('jobs.index')->with('status', 'Job berhasil dibuat. Saldo Anda telah dipotong.');
     }
 
     public function edit(Job $job)
@@ -89,8 +100,21 @@ class JobController extends Controller
         $this->authorize('update', $job);
 
         $data = $this->validateJob($request);
+        $user = $request->user();
 
-        DB::transaction(function () use ($job, $data) {
+        // Jika harga naik, cek saldo cukup untuk selisihnya
+        if ($data['price'] > $job->price) {
+            $selisih = $data['price'] - $job->price;
+            if ($user->balance < $selisih) {
+                return back()->withErrors([
+                    'price' => 'Saldo Anda tidak cukup untuk menaikkan harga. Saldo saat ini: Rp ' . number_format($user->balance, 0, ',', '.') . '. Butuh tambahan: Rp ' . number_format($selisih, 0, ',', '.') . '.',
+                ])->withInput();
+            }
+        }
+
+        DB::transaction(function () use ($job, $data, $user) {
+            $hargaLama = $job->price;
+            
             $job->update([
                 'title' => $data['title'],
                 'description' => $data['description'],
@@ -99,18 +123,38 @@ class JobController extends Controller
             ]);
 
             $job->categories()->sync($data['categories'] ?? []);
+
+            // Jika harga naik, potong selisih dari saldo
+            if ($data['price'] > $hargaLama) {
+                $selisih = $data['price'] - $hargaLama;
+                $user->decrement('balance', $selisih);
+            }
+            // Jika harga turun, kembalikan selisih ke saldo
+            elseif ($data['price'] < $hargaLama) {
+                $selisih = $hargaLama - $data['price'];
+                $user->increment('balance', $selisih);
+            }
         });
 
         return redirect()->route('jobs.index')->with('status', 'Job berhasil diperbarui.');
     }
 
-    public function destroy(Job $job)
+    public function destroy(Request $request, Job $job)
     {
         $this->authorize('delete', $job);
 
-        $job->delete();
+        $user = $request->user();
 
-        return redirect()->route('jobs.index')->with('status', 'Job berhasil dihapus.');
+        DB::transaction(function () use ($job, $user) {
+            // Kembalikan saldo jika job belum diambil
+            if ($job->status === Job::STATUS_PENDING) {
+                $user->increment('balance', $job->price);
+            }
+
+            $job->delete();
+        });
+
+        return redirect()->route('jobs.index')->with('status', 'Job berhasil dihapus. Saldo telah dikembalikan.');
     }
 
     protected function validateJob(Request $request): array

@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role',
         'avg_rating',
         'is_suspended',
+        'balance',
     ];
 
     /**
@@ -50,6 +51,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'avg_rating' => 'float',
             'is_suspended' => 'boolean',
+            'balance' => 'decimal:2',
         ];
     }
 
@@ -68,5 +70,10 @@ class User extends Authenticatable
         return $this->jobsAssigned()
             ->where('status', Job::STATUS_PROGRESS)
             ->count();
+    }
+
+    public function topups()
+    {
+        return $this->hasMany(Topup::class, 'user_id', 'user_id');
     }
 }
