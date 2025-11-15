@@ -11,6 +11,7 @@
                 @endif
                 <a href="{{ route('dashboard') }}" class="hover:text-indigo-600">Dashboard</a>
                 <a href="{{ route('jobs.index') }}" class="hover:text-indigo-600">Job</a>
+                <a href="{{ route('profile.show') }}" class="hover:text-indigo-600">Profile</a>
                 @if (auth()->user()->role !== 'admin')
                     <a href="{{ route('topups.index') }}" class="hover:text-indigo-600">Topup</a>
                 @else

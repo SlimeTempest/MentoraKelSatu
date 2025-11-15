@@ -27,6 +27,9 @@ class User extends Authenticatable
         'avg_rating',
         'is_suspended',
         'balance',
+        'recovery_code',
+        'photo',
+        'phone',
     ];
 
     /**

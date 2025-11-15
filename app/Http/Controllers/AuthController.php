@@ -48,17 +48,55 @@ class AuthController extends Controller
             'role' => ['required', 'in:mahasiswa,dosen'],
         ]);
 
+        // Generate recovery code (8 karakter alphanumeric)
+        $recoveryCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'],
+            'recovery_code' => $recoveryCode,
         ]);
 
         Auth::login($user);
         $request->session()->regenerate();
 
         return redirect('/dashboard');
+    }
+
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'recovery_code' => ['required', 'string', 'size:8'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        $user = User::where('email', $data['email'])
+            ->where('recovery_code', strtoupper($data['recovery_code']))
+            ->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'recovery_code' => 'Email atau recovery code tidak valid.',
+            ])->onlyInput('email');
+        }
+
+        // Update password dan generate recovery code baru
+        $newRecoveryCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+
+        $user->update([
+            'password' => Hash::make($data['password']),
+            'recovery_code' => $newRecoveryCode,
+        ]);
+
+        return redirect()->route('login')->with('status', 'Password berhasil direset. Silakan login dengan password baru.');
     }
 
     public function logout(Request $request)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class JobAssignmentController extends Controller
 {
@@ -51,11 +52,22 @@ class JobAssignmentController extends Controller
             return back()->withErrors(['job' => 'Job ini belum dalam status pengerjaan.']);
         }
 
-        $job->update([
-            'status' => Job::STATUS_DONE,
-        ]);
+        DB::transaction(function () use ($job) {
+            // Update status job menjadi selesai
+            $job->update([
+                'status' => Job::STATUS_DONE,
+            ]);
 
-        return back()->with('status', 'Job ditandai selesai.');
+            // Transfer saldo ke worker yang mengerjakan job
+            if ($job->assigned_to) {
+                $worker = $job->assignee;
+                if ($worker) {
+                    $worker->increment('balance', $job->price);
+                }
+            }
+        });
+
+        return back()->with('status', 'Job ditandai selesai. Pembayaran telah ditransfer ke worker.');
     }
 }
 

@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Job;
+use App\Services\JobExpirationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class JobController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, JobExpirationService $expirationService)
     {
+        // Auto-check dan expire jobs yang sudah melewati deadline
+        // Ini akan otomatis berjalan setiap kali ada yang akses halaman jobs
+        $expirationService->expireJobs();
+
         $user = $request->user();
 
         if ($user->role === 'admin') {
@@ -146,15 +151,20 @@ class JobController extends Controller
         $user = $request->user();
 
         DB::transaction(function () use ($job, $user) {
-            // Kembalikan saldo jika job belum diambil
-            if ($job->status === Job::STATUS_PENDING) {
+            // Kembalikan saldo jika job belum selesai (PENDING atau PROGRESS)
+            // Jika sudah DONE, saldo sudah terbayar ke worker, jadi tidak perlu dikembalikan
+            if (in_array($job->status, [Job::STATUS_PENDING, Job::STATUS_PROGRESS])) {
                 $user->increment('balance', $job->price);
             }
 
             $job->delete();
         });
 
-        return redirect()->route('jobs.index')->with('status', 'Job berhasil dihapus. Saldo telah dikembalikan.');
+        $message = in_array($job->status, [Job::STATUS_PENDING, Job::STATUS_PROGRESS])
+            ? 'Job berhasil dihapus. Saldo telah dikembalikan.'
+            : 'Job berhasil dihapus.';
+
+        return redirect()->route('jobs.index')->with('status', $message);
     }
 
     protected function validateJob(Request $request): array
