@@ -42,6 +42,7 @@
                             <span class="text-sm font-medium text-gray-600">Nama</span>
                             <span class="text-sm text-gray-900">{{ $user->name }}</span>
                         </div>
+                        @if ($isOwnProfile)
                         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                             <span class="text-sm font-medium text-gray-600">Email</span>
                             <span class="text-sm text-gray-900">{{ $user->email }}</span>
@@ -50,7 +51,6 @@
                             <span class="text-sm font-medium text-gray-600">No. Telepon</span>
                             <span class="text-sm text-gray-900">{{ $user->phone ?? '-' }}</span>
                         </div>
-                        @if ($isOwnProfile)
                         <div class="flex items-center justify-between">
                             <span class="text-sm font-medium text-gray-600">Recovery Code</span>
                             <div class="flex items-center gap-2">
@@ -173,7 +173,7 @@
                     btn.classList.add('border-gray-300', 'text-gray-700');
                 }, 2000);
             }).catch(function(err) {
-                alert('Gagal menyalin recovery code');
+                showToast('Gagal menyalin recovery code', 'error');
             });
         }
 

@@ -54,10 +54,18 @@
                                             <p class="text-xs text-gray-500">{{ Str::limit($job->description, 60) }}</p>
                                         </td>
                                         <td class="px-4 py-3 text-gray-700">
-                                            {{ $job->creator->name }}
+                                            <a href="{{ route('users.profile.show', $job->creator) }}" class="text-indigo-600 hover:underline">
+                                                {{ $job->creator->name }}
+                                            </a>
                                         </td>
                                         <td class="px-4 py-3 text-gray-700">
-                                            {{ $job->assignee->name ?? '-' }}
+                                            @if ($job->assignee)
+                                                <a href="{{ route('users.profile.show', $job->assignee) }}" class="text-indigo-600 hover:underline">
+                                                    {{ $job->assignee->name }}
+                                                </a>
+                                            @else
+                                                -
+                                            @endif
                                         </td>
                                         <td class="px-4 py-3">
                                             @php
@@ -131,7 +139,12 @@
                             <article class="p-4">
                                 <div class="flex flex-wrap items-start justify-between gap-4">
                                     <div>
-                                        <p class="text-sm uppercase text-gray-500">Dibuat oleh {{ $job->creator->name }}</p>
+                                        <p class="text-sm uppercase text-gray-500">
+                                            Dibuat oleh 
+                                            <a href="{{ route('users.profile.show', $job->creator) }}" class="font-semibold text-indigo-600 hover:underline">
+                                                {{ $job->creator->name }}
+                                            </a>
+                                        </p>
                                         <h3 class="text-lg font-semibold text-gray-900">{{ $job->title }}</h3>
                                         <p class="mt-2 text-sm text-gray-700">{{ Str::limit($job->description, 160) }}</p>
                                         <div class="mt-2 flex flex-wrap gap-2">
@@ -189,7 +202,13 @@
                                             <span class="rounded bg-gray-100 px-2 py-0.5 text-xs capitalize text-gray-700">{{ str_replace('_', ' ', $job->status) }}</span>
                                         </td>
                                         <td class="px-4 py-3 text-gray-700">
-                                            {{ $job->assignee->name ?? '-' }}
+                                            @if ($job->assignee)
+                                                <a href="{{ route('users.profile.show', $job->assignee) }}" class="text-indigo-600 hover:underline">
+                                                    {{ $job->assignee->name }}
+                                                </a>
+                                            @else
+                                                -
+                                            @endif
                                         </td>
                                         <td class="px-4 py-3">
                                             <div class="flex flex-wrap gap-2 text-xs">
@@ -197,12 +216,29 @@
                                                     <a href="{{ route('jobs.edit', $job) }}" class="rounded border border-gray-300 px-2 py-1 text-gray-700 hover:bg-gray-50">Edit</a>
                                                 @endcan
                                                 @can('delete', $job)
-                                                    <form id="delete-form-user-{{ $job->job_id }}" action="{{ route('jobs.destroy', $job) }}" method="POST">
+                                                    <form id="delete-form-user-{{ $job->job_id }}" action="{{ route('jobs.destroy', $job) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button" onclick="customConfirm('Hapus job ini?', function(confirmed) { if(confirmed) document.getElementById('delete-form-user-{{ $job->job_id }}').submit(); })" class="rounded border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50">Hapus</button>
                                                     </form>
                                                 @endcan
+                                                @if ($job->status === \App\Models\Job::STATUS_DONE && $job->assignee && !$job->feedback)
+                                                    <a href="{{ route('jobs.feedback.create', $job) }}" class="inline-flex items-center gap-1 rounded bg-yellow-500 px-2 py-1 text-white hover:bg-yellow-600">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                                        </svg>
+                                                        Rating
+                                                    </a>
+                                                @endif
+                                                @if ($job->status === \App\Models\Job::STATUS_DONE && $job->assignee)
+                                                    <a href="{{ route('reports.create', ['job_id' => $job->job_id]) }}" class="inline-flex items-center gap-1 rounded border border-orange-300 px-2 py-1 text-orange-600 hover:bg-orange-50">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                                                            <line x1="4" x2="4" y1="22" y2="15"/>
+                                                        </svg>
+                                                        Laporkan
+                                                    </a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -229,7 +265,12 @@
                             <article class="p-4">
                                 <div class="flex flex-wrap items-start justify-between gap-4">
                                     <div>
-                                        <p class="text-sm uppercase text-gray-500">Dari {{ $job->creator->name }}</p>
+                                        <p class="text-sm uppercase text-gray-500">
+                                            Dari 
+                                            <a href="{{ route('users.profile.show', $job->creator) }}" class="font-semibold text-indigo-600 hover:underline">
+                                                {{ $job->creator->name }}
+                                            </a>
+                                        </p>
                                         <h3 class="text-lg font-semibold text-gray-900">{{ $job->title }}</h3>
                                         <p class="mt-2 text-sm text-gray-700">{{ Str::limit($job->description, 160) }}</p>
                                         <div class="mt-2 flex flex-wrap gap-2">
@@ -239,14 +280,25 @@
                                             @endif
                                         </div>
                                     </div>
-                                    @if ($job->status === \App\Models\Job::STATUS_PROGRESS)
-                                        <form action="{{ route('jobs.complete', $job) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="rounded bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500">
-                                                Tandai Selesai
-                                            </button>
-                                        </form>
-                                    @endif
+                                    <div class="flex flex-wrap gap-2">
+                                        @if ($job->status === \App\Models\Job::STATUS_PROGRESS)
+                                            <form action="{{ route('jobs.complete', $job) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="rounded bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500">
+                                                    Tandai Selesai
+                                                </button>
+                                            </form>
+                                        @endif
+                                        @if ($job->status === \App\Models\Job::STATUS_DONE)
+                                            <a href="{{ route('reports.create', ['job_id' => $job->job_id]) }}" class="inline-flex items-center gap-1.5 rounded border border-orange-300 px-3 py-1.5 text-sm font-semibold text-orange-600 hover:bg-orange-50">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                                                    <line x1="4" x2="4" y1="22" y2="15"/>
+                                                </svg>
+                                                Laporkan
+                                            </a>
+                                        @endif
+                                    </div>
                                 </div>
                             </article>
                         @endforeach

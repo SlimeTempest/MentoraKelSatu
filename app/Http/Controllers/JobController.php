@@ -36,7 +36,7 @@ class JobController extends Controller
 
         return view('jobs.index', [
             'availableJobs' => $availableJobsQuery->get(),
-            'myJobs' => $user->jobsCreated()->with(['assignee', 'categories'])->latest()->get(),
+            'myJobs' => $user->jobsCreated()->with(['assignee', 'categories', 'feedback'])->latest()->get(),
             'assignedJobs' => $user->jobsAssigned()->with(['creator', 'categories'])->latest()->get(),
             'isAdmin' => false,
         ]);

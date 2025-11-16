@@ -79,4 +79,30 @@ class User extends Authenticatable
     {
         return $this->hasMany(Topup::class, 'user_id', 'user_id');
     }
+
+    public function feedbacksGiven()
+    {
+        return $this->hasMany(Feedback::class, 'given_by', 'user_id');
+    }
+
+    public function feedbacksReceived()
+    {
+        return $this->hasMany(Feedback::class, 'given_to', 'user_id');
+    }
+
+    public function reportsMade()
+    {
+        return $this->hasMany(Report::class, 'reported_by', 'user_id');
+    }
+
+    public function reportsReceived()
+    {
+        return $this->hasMany(Report::class, 'reported_user', 'user_id');
+    }
+
+    public function updateAvgRating()
+    {
+        $avgRating = $this->feedbacksReceived()->avg('rating') ?? 0;
+        $this->update(['avg_rating' => round($avgRating, 2)]);
+    }
 }

@@ -136,7 +136,7 @@
                     buttonElement.classList.add('text-blue-700', 'hover:bg-blue-100', 'border-blue-300');
                 }, 2000);
             }).catch(function(err) {
-                alert('Gagal menyalin: ' + err);
+                showToast('Gagal menyalin: ' + err, 'error');
             });
         }
 

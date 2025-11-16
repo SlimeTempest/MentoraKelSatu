@@ -51,5 +51,10 @@ class Job extends Model
     {
         return $query->where('status', self::STATUS_PENDING);
     }
+
+    public function feedback()
+    {
+        return $this->hasOne(Feedback::class, 'job_id', 'job_id');
+    }
 }
 

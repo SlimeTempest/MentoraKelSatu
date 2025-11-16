@@ -24,6 +24,16 @@ class AuthController extends Controller
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
+            $user = Auth::user();
+            
+            // Cek apakah user ditangguhkan
+            if ($user->is_suspended) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Akun Anda telah ditangguhkan. Silakan hubungi administrator.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
 
             return redirect()->intended('/dashboard');
@@ -106,7 +116,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('login')->with('status', 'Anda telah berhasil logout.');
     }
 }
 
