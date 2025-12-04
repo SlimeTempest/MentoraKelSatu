@@ -2,7 +2,7 @@
 
 return [
     'bca' => [
-        'number' => env('TOPUP_BCA_NUMBER', '514352345'),
+        'number' => env('TOPUP_BCA_NUMBER', '51435234523'),
         'name' => env('TOPUP_BCA_NAME', 'MentoraKelSatu'),
     ],
     'mandiri' => [

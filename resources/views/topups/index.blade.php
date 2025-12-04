@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="mb-6 flex items-center justify-between">
-        <h1 class="text-2xl font-semibold text-gray-800">Riwayat Topup</h1>
+        <h1 class="text-2xl font-bold text-white">Riwayat Topup</h1>
         <a href="{{ route('topups.create') }}" class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
             + Topup Baru
         </a>

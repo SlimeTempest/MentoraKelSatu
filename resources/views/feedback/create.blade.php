@@ -2,10 +2,10 @@
 
 @section('content')
     <div class="rounded-lg bg-white p-8 shadow">
-        <h1 class="mb-6 text-2xl font-semibold text-gray-800">Beri Rating untuk Job</h1>
+        <h1 class="mb-6 text-2xl font-bold text-white">Beri Rating untuk Job</h1>
 
         <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <h3 class="font-semibold text-gray-800">{{ $job->title }}</h3>
+            <h3 class="font-semibold text-white">{{ $job->title }}</h3>
             <p class="mt-1 text-sm text-gray-600">Worker: <strong>{{ $job->assignee->name }}</strong></p>
             <p class="mt-1 text-sm text-gray-600">Harga: <strong>Rp {{ number_format($job->price, 0, ',', '.') }}</strong></p>
         </div>

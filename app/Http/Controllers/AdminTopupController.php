@@ -21,7 +21,7 @@ class AdminTopupController extends Controller
 
         $allTopups = Topup::with(['user'])
             ->latest()
-            ->paginate(20);
+            ->paginate(10);
 
         return view('admin.topups.index', [
             'pendingTopups' => $pendingTopups,

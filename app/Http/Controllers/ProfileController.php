@@ -105,4 +105,18 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.show')->with('status', 'Password berhasil diubah.');
     }
+
+    public function generateRecoveryCode(Request $request)
+    {
+        $user = $request->user();
+        
+        // Generate new recovery code (8 characters alphanumeric)
+        $recoveryCode = strtoupper(substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 8));
+        
+        $user->update([
+            'recovery_code' => $recoveryCode,
+        ]);
+
+        return redirect()->route('profile.show')->with('status', 'Recovery code berhasil digenerate.');
+    }
 }

@@ -5,8 +5,12 @@
 @endphp
 
 @section('content')
-    <div class="rounded-lg bg-white p-8 shadow">
-        <h1 class="mb-6 text-2xl font-semibold text-gray-800">Edit Profile</h1>
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-white">Edit Profile</h1>
+        <p class="mt-1 text-sm text-gray-400">Ubah informasi profil Anda</p>
+    </div>
+
+    <div class="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg">
 
         <div class="space-y-6">
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
@@ -16,13 +20,13 @@
                 <div class="space-y-4">
                     {{-- Photo Upload --}}
                     <div>
-                        <label class="mb-2 block text-sm font-medium text-gray-700">Foto Profil</label>
+                        <label class="mb-2 block text-sm font-medium text-gray-300">Foto Profil</label>
                         <div class="flex items-center gap-4">
                             <div id="photo-preview" class="relative">
                                 @if ($user->photo)
-                                    <img id="preview-img" src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="h-24 w-24 rounded-full object-cover border-2 border-gray-200">
+                                    <img id="preview-img" src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="h-24 w-24 rounded-full object-cover border-2 border-gray-600">
                                 @else
-                                    <div id="preview-initial" class="flex h-24 w-24 items-center justify-center rounded-full bg-indigo-100 text-3xl font-semibold text-indigo-600 border-2 border-gray-200">
+                                    <div id="preview-initial" class="flex h-24 w-24 items-center justify-center rounded-full bg-blue-500/20 text-3xl font-semibold text-blue-400 border-2 border-gray-600">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </div>
                                 @endif
@@ -33,69 +37,71 @@
                                     id="photo"
                                     name="photo"
                                     accept="image/jpeg,image/png,image/jpg"
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                                    class="block w-full text-sm text-gray-400 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-500 transition-colors"
                                 >
-                                <p class="mt-1 text-xs text-gray-500">Format: JPG, PNG. Maksimal 2MB</p>
+                                <p class="mt-1 text-xs text-gray-400">Format: JPG, PNG. Maksimal 2MB</p>
                             </div>
                         </div>
                         @error('photo')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
                     {{-- Name --}}
                     <div>
-                        <label for="name" class="mb-2 block text-sm font-medium text-gray-700">Nama</label>
+                        <label for="name" class="mb-2 block text-sm font-medium text-gray-300">Nama</label>
                         <input
                             type="text"
                             id="name"
                             name="name"
                             value="{{ old('name', $user->name) }}"
                             required
-                            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                            class="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                            placeholder="Masukkan nama lengkap"
                         >
                         @error('name')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
                     {{-- Email --}}
                     <div>
-                        <label for="email" class="mb-2 block text-sm font-medium text-gray-700">Email</label>
+                        <label for="email" class="mb-2 block text-sm font-medium text-gray-300">Email</label>
                         <input
                             type="email"
                             id="email"
                             name="email"
                             value="{{ old('email', $user->email) }}"
                             required
-                            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                            class="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                            placeholder="Masukkan alamat email"
                         >
                         @error('email')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
                     {{-- Phone --}}
                     <div>
-                        <label for="phone" class="mb-2 block text-sm font-medium text-gray-700">No. Telepon</label>
+                        <label for="phone" class="mb-2 block text-sm font-medium text-gray-300">No. Telepon</label>
                         <input
                             type="text"
                             id="phone"
                             name="phone"
                             value="{{ old('phone', $user->phone) }}"
                             placeholder="08xxxxxxxxxx"
-                            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                            class="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
                         >
                         @error('phone')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="flex justify-end gap-3">
-                        <a href="{{ route('profile.show') }}" class="rounded border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                        <a href="{{ route('profile.show') }}" class="rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition-all duration-200 hover:bg-gray-600 hover:text-white">
                             Batal
                         </a>
-                        <button type="submit" class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                        <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-lg">
                             Simpan
                         </button>
                     </div>
@@ -103,56 +109,59 @@
             </form>
 
             {{-- Change Password --}}
-            <div class="border-t border-gray-200 pt-6">
-                <h2 class="mb-4 text-lg font-semibold text-gray-800">Ubah Password</h2>
+            <div class="border-t border-gray-700 pt-6">
+                <h2 class="mb-4 text-lg font-semibold text-white">Ubah Password</h2>
                 <form action="{{ route('profile.password.update') }}" method="POST">
                     @csrf
                     @method('PUT')
 
                     <div class="space-y-4">
                         <div>
-                            <label for="current_password" class="mb-2 block text-sm font-medium text-gray-700">Password Saat Ini</label>
+                            <label for="current_password" class="mb-2 block text-sm font-medium text-gray-300">Password Saat Ini</label>
                             <input
                                 type="password"
                                 id="current_password"
                                 name="current_password"
                                 required
-                                class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                                class="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                placeholder="Masukkan password saat ini"
                             >
                             @error('current_password')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="password" class="mb-2 block text-sm font-medium text-gray-700">Password Baru</label>
+                            <label for="password" class="mb-2 block text-sm font-medium text-gray-300">Password Baru</label>
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
                                 required
                                 minlength="8"
-                                class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                                class="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                placeholder="Masukkan password baru (min. 8 karakter)"
                             >
                             @error('password')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-700">Konfirmasi Password Baru</label>
+                            <label for="password_confirmation" class="mb-2 block text-sm font-medium text-gray-300">Konfirmasi Password Baru</label>
                             <input
                                 type="password"
                                 id="password_confirmation"
                                 name="password_confirmation"
                                 required
                                 minlength="8"
-                                class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                                class="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors"
+                                placeholder="Konfirmasi password baru"
                             >
                         </div>
 
                         <div class="flex justify-end">
-                            <button type="submit" class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                            <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-lg">
                                 Ubah Password
                             </button>
                         </div>
@@ -187,7 +196,7 @@
                     const img = document.createElement('img');
                     img.id = 'preview-img';
                     img.src = e.target.result;
-                    img.className = 'h-24 w-24 rounded-full object-cover border-2 border-indigo-300';
+                    img.className = 'h-24 w-24 rounded-full object-cover border-2 border-blue-500';
                     previewContainer.appendChild(img);
                 };
                 reader.readAsDataURL(file);

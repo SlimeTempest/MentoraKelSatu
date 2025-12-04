@@ -1,28 +1,32 @@
 @extends('layouts.app', ['title' => 'Kelola User'])
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
     <div class="space-y-6">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-semibold text-gray-800">Kelola User</h1>
+            <h1 class="text-2xl font-bold text-white">Kelola User</h1>
         </div>
 
         {{-- Search and Filter --}}
-        <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div class="rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-lg">
             <form action="{{ route('admin.users.index') }}" method="GET" class="space-y-4">
                 <div class="grid gap-4 md:grid-cols-4">
                     <div>
-                        <label class="mb-1 block text-xs font-medium text-gray-600">Cari Nama</label>
+                        <label class="mb-1 block text-xs font-medium text-gray-400">Cari Nama</label>
                         <input
                             type="text"
                             name="search"
                             value="{{ $search }}"
                             placeholder="Cari nama user..."
-                            class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                            class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         >
                     </div>
                     <div>
-                        <label class="mb-1 block text-xs font-medium text-gray-600">Role</label>
-                        <select name="role" class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+                        <label class="mb-1 block text-xs font-medium text-gray-400">Role</label>
+                        <select name="role" class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             <option value="all" {{ $roleFilter === 'all' ? 'selected' : '' }}>Semua</option>
                             <option value="mahasiswa" {{ $roleFilter === 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
                             <option value="dosen" {{ $roleFilter === 'dosen' ? 'selected' : '' }}>Dosen</option>
@@ -30,15 +34,15 @@
                         </select>
                     </div>
                     <div>
-                        <label class="mb-1 block text-xs font-medium text-gray-600">Status</label>
-                        <select name="suspended" class="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none">
+                        <label class="mb-1 block text-xs font-medium text-gray-400">Status</label>
+                        <select name="suspended" class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             <option value="all" {{ $suspendedFilter === 'all' ? 'selected' : '' }}>Semua</option>
                             <option value="0" {{ $suspendedFilter === '0' ? 'selected' : '' }}>Aktif</option>
                             <option value="1" {{ $suspendedFilter === '1' ? 'selected' : '' }}>Ditangguhkan</option>
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" class="w-full rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+                        <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition-colors">
                             Cari
                         </button>
                     </div>
@@ -47,88 +51,98 @@
         </div>
 
         {{-- Users Table --}}
-        <div class="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div class="rounded-lg border border-gray-700 bg-gray-800 shadow-lg overflow-hidden">
             @if ($users->isEmpty())
                 <div class="p-8 text-center">
-                    <p class="text-sm text-gray-500">Tidak ada user yang ditemukan.</p>
+                    <p class="text-sm text-gray-400">Tidak ada user yang ditemukan.</p>
                 </div>
             @else
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead class="bg-gray-50">
+                    <table class="min-w-full divide-y divide-gray-700 text-sm">
+                        <thead class="bg-gray-700/50">
                             <tr>
-                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-600">User</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-600">Role</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-600">Status</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-600">Rating</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-600">Bergabung</th>
-                                <th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-600">Aksi</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">User</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Role</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Rating</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Bergabung</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 bg-white">
+                        <tbody class="divide-y divide-gray-700 bg-gray-800">
                             @foreach ($users as $user)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3">
+                                <tr class="hover:bg-gray-700/50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
-                                            @if ($user->photo)
-                                                <img src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="h-10 w-10 rounded-full object-cover">
+                                            @if ($user->photo && Storage::exists($user->photo))
+                                                <img src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="h-12 w-12 rounded-full object-cover border-2 border-gray-600">
+                                            @elseif ($user->photo)
+                                                <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" class="h-12 w-12 rounded-full object-cover border-2 border-gray-600" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <div class="hidden h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white border-2 border-gray-600">
+                                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                                </div>
                                             @else
-                                                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-600">
+                                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white border-2 border-gray-600">
                                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                                 </div>
                                             @endif
                                             <div>
-                                                <a href="{{ route('users.profile.show', $user) }}" class="font-medium text-gray-900 hover:text-indigo-600">
+                                                <a href="{{ route('users.profile.show', $user) }}" class="font-semibold text-white hover:text-blue-400 transition-colors">
                                                     {{ $user->name }}
                                                 </a>
-                                                <p class="text-xs text-gray-500">{{ $user->email }}</p>
+                                                <p class="text-xs text-gray-400 mt-0.5">{{ $user->email }}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3">
-                                        <span class="rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 capitalize">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium capitalize
+                                            {{ $user->role === 'admin' ? 'bg-purple-500/20 text-purple-300' : ($user->role === 'dosen' ? 'bg-blue-500/20 text-blue-300' : 'bg-green-500/20 text-green-300') }}">
                                             {{ $user->role }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($user->is_suspended)
-                                            <span class="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Ditangguhkan</span>
+                                            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-red-500/20 text-red-300">
+                                                Ditangguhkan
+                                            </span>
                                         @else
-                                            <span class="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Aktif</span>
+                                            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-300">
+                                                Aktif
+                                            </span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-gray-700">
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($user->role !== 'admin')
-                                            <div class="flex items-center gap-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
-                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                            <div class="flex items-center gap-1.5">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                                 </svg>
-                                                <span class="text-sm">{{ number_format($user->avg_rating, 1) }}</span>
+                                                <span class="text-sm font-medium text-white">{{ number_format($user->avg_rating, 1) }}</span>
                                             </div>
                                         @else
-                                            <span class="text-xs text-gray-400">-</span>
+                                            <span class="text-xs text-gray-500">-</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-xs text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                                         {{ $user->created_at->format('d M Y') }}
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-2">
-                                            <a href="{{ route('users.profile.show', $user) }}" class="rounded border border-gray-300 px-2 py-1 text-xs text-gray-700 hover:bg-gray-50">
+                                            <a href="{{ route('users.profile.show', $user) }}" class="rounded-lg border border-gray-600 bg-gray-700 px-3 py-1.5 text-xs font-medium text-gray-300 hover:bg-gray-600 hover:text-white transition-colors">
                                                 Lihat
                                             </a>
                                             @if ($user->user_id !== auth()->id() && $user->role !== 'admin')
                                                 @if ($user->is_suspended)
                                                     <form id="unsuspend-form-{{ $user->user_id }}" action="{{ route('admin.users.unsuspend', $user) }}" method="POST" class="inline">
                                                         @csrf
-                                                        <button type="button" class="rounded bg-green-600 px-2 py-1 text-xs text-white hover:bg-green-500" onclick="customConfirm('Aktifkan kembali akun <strong>{{ $user->name }}</strong>?', function(confirmed) { if(confirmed) document.getElementById('unsuspend-form-{{ $user->user_id }}').submit(); })">
+                                                        <button type="button" class="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-500 transition-colors" onclick="customConfirm('Aktifkan kembali akun <strong>{{ $user->name }}</strong>?', function(confirmed) { if(confirmed) document.getElementById('unsuspend-form-{{ $user->user_id }}').submit(); })">
                                                             Aktifkan
                                                         </button>
                                                     </form>
                                                 @else
                                                     <form id="suspend-form-{{ $user->user_id }}" action="{{ route('admin.users.suspend', $user) }}" method="POST" class="inline">
                                                         @csrf
-                                                        <button type="button" class="rounded bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-500" onclick="customConfirm('Tangguhkan akun <strong>{{ $user->name }}</strong>? User tidak akan bisa login hingga akun diaktifkan kembali.', function(confirmed) { if(confirmed) document.getElementById('suspend-form-{{ $user->user_id }}').submit(); })">
+                                                        <button type="button" class="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-500 transition-colors" onclick="customConfirm('Tangguhkan akun <strong>{{ $user->name }}</strong>? User tidak akan bisa login hingga akun diaktifkan kembali.', function(confirmed) { if(confirmed) document.getElementById('suspend-form-{{ $user->user_id }}').submit(); })">
                                                             Tangguhkan
                                                         </button>
                                                     </form>
@@ -142,15 +156,17 @@
                     </table>
                 </div>
 
-                <div class="border-t border-gray-200 px-4 py-3">
-                    {{ $users->appends(request()->query())->links() }}
+                <div class="border-t border-gray-700 bg-gray-700/30 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-400">
+                            Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} results
+                        </div>
+                        <div>
+                            {{ $users->appends(request()->query())->onEachSide(2)->links() }}
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>
     </div>
-
-    @php
-        use Illuminate\Support\Facades\Storage;
-    @endphp
 @endsection
-

@@ -21,7 +21,7 @@ class JobController extends Controller
         if ($user->role === 'admin') {
             $allJobs = Job::with(['creator', 'assignee', 'categories'])
                 ->latest()
-                ->get();
+                ->paginate(10);
 
             return view('jobs.index', [
                 'allJobs' => $allJobs,
@@ -35,9 +35,9 @@ class JobController extends Controller
             ->orderByDesc('created_at');
 
         return view('jobs.index', [
-            'availableJobs' => $availableJobsQuery->get(),
-            'myJobs' => $user->jobsCreated()->with(['assignee', 'categories', 'feedback'])->latest()->get(),
-            'assignedJobs' => $user->jobsAssigned()->with(['creator', 'categories'])->latest()->get(),
+            'availableJobs' => $availableJobsQuery->paginate(10),
+            'myJobs' => $user->jobsCreated()->with(['assignee', 'categories', 'feedback'])->latest()->paginate(10),
+            'assignedJobs' => $user->jobsAssigned()->with(['creator', 'categories'])->latest()->paginate(10),
             'isAdmin' => false,
         ]);
     }

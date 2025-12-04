@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminSettingController;
 use App\Http\Controllers\AdminTopupController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\JobAssignmentController;
 use App\Http\Controllers\JobController;
@@ -31,10 +32,14 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
+    // Google OAuth Routes
+    Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('google.callback');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::resource('jobs', JobController::class)->except(['show']);
@@ -53,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::post('profile/recovery-code', [ProfileController::class, 'generateRecoveryCode'])->name('profile.recovery-code.generate');
     Route::get('users/{user}/profile', [ProfileController::class, 'show'])->name('users.profile.show');
 
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {

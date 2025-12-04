@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="mx-auto max-w-2xl rounded-lg bg-white p-8 shadow">
-        <h1 class="mb-6 text-2xl font-semibold text-gray-800">Topup Saldo</h1>
+        <h1 class="mb-6 text-2xl font-bold text-white">Topup Saldo</h1>
 
         <form action="{{ route('topups.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf

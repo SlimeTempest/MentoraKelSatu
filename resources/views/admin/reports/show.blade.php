@@ -3,7 +3,7 @@
 @section('content')
     <div class="space-y-6">
         <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-semibold text-gray-800">Detail Laporan</h1>
+            <h1 class="text-2xl font-bold text-white">Detail Laporan</h1>
             <a href="{{ route('admin.reports.index') }}" class="rounded border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50">
                 Kembali
             </a>
@@ -11,7 +11,7 @@
 
         <div class="grid gap-6 md:grid-cols-2">
             <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 class="mb-4 text-lg font-semibold text-gray-800">Informasi Laporan</h3>
+                <h3 class="mb-4 text-lg font-semibold text-white">Informasi Laporan</h3>
                 <div class="space-y-3">
                     <div>
                         <p class="text-sm font-medium text-gray-600">Dilaporkan Oleh</p>
@@ -93,13 +93,13 @@
             </div>
 
             <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 class="mb-4 text-lg font-semibold text-gray-800">Deskripsi Laporan</h3>
+                <h3 class="mb-4 text-lg font-semibold text-white">Deskripsi Laporan</h3>
                 <p class="whitespace-pre-wrap text-sm text-gray-700">{{ $report->description }}</p>
             </div>
         </div>
 
         <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h3 class="mb-4 text-lg font-semibold text-gray-800">Ubah Status</h3>
+            <h3 class="mb-4 text-lg font-semibold text-white">Ubah Status</h3>
             <form action="{{ route('admin.reports.update-status', $report) }}" method="POST">
                 @csrf
                 @method('PUT')

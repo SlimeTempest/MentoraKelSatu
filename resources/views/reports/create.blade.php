@@ -2,11 +2,11 @@
 
 @section('content')
     <div class="rounded-lg bg-white p-8 shadow">
-        <h1 class="mb-6 text-2xl font-semibold text-gray-800">Laporkan Masalah</h1>
+        <h1 class="mb-6 text-2xl font-bold text-white">Laporkan Masalah</h1>
 
         @if ($job)
             <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-                <h3 class="font-semibold text-gray-800">Job: {{ $job->title }}</h3>
+                <h3 class="font-semibold text-white">Job: {{ $job->title }}</h3>
                 <p class="mt-1 text-sm text-gray-600">
                     @if (auth()->user()->user_id === $job->created_by)
                         Melaporkan: <strong>{{ $job->assignee->name ?? 'Worker' }}</strong>

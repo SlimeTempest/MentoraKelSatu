@@ -21,7 +21,7 @@ class AdminReportController extends Controller
 
         $allReports = Report::with(['reporter', 'reportedUser'])
             ->latest()
-            ->paginate(20);
+            ->paginate(10);
 
         return view('admin.reports.index', [
             'pendingReports' => $pendingReports,

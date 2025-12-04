@@ -31,7 +31,7 @@ class AdminUserController extends Controller
             $query->where('is_suspended', $request->get('suspended') === '1');
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(20);
+        $users = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return view('admin.users.index', [
             'users' => $users,
