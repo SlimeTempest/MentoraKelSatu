@@ -1,6 +1,6 @@
-<div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+<div class="flex w-full items-center justify-between py-4 pl-8 sm:pl-12 lg:pl-16">
     <a href="/" class="text-xl font-semibold text-blue-400 hover:text-blue-300 transition-colors">MentoraKelSatu</a>
-    <nav class="flex items-center gap-4 text-sm font-medium text-gray-300">
+    <nav class="flex items-center gap-4 pr-8 text-sm font-medium text-gray-300 sm:pr-12 lg:pr-16">
         @auth
             @if (auth()->check() && auth()->user()->role !== 'admin')
                 <div class="flex items-center gap-2 rounded-lg bg-gray-700 px-3 py-1.5">

@@ -1,5 +1,5 @@
 <!-- Topbar -->
-<header class="fixed top-0 right-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-700 bg-gray-800 pl-2 pr-1 sm:pl-4 sm:pr-2 transition-all duration-300 lg:left-64" style="min-width: 0; overflow: visible !important;">
+<header class="fixed top-0 left-0 right-0 lg:left-64 z-50 flex h-16 items-center justify-between border-b border-gray-700 bg-gray-800 pl-2 pr-1 sm:pl-4 sm:pr-2 transition-all duration-300" style="min-width: 0; overflow: visible !important; background-color: rgb(31 41 55) !important;">
     <div class="flex items-center gap-2 flex-shrink-0">
         <!-- Mobile Menu Button -->
         <button id="sidebar-toggle" class="lg:hidden rounded-lg p-2 text-gray-300 transition-all duration-200 hover:bg-gray-700 hover:text-white hover:scale-110 active:scale-95 flex-shrink-0">
@@ -9,29 +9,29 @@
         </button>
     </div>
 
-    <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0" style="min-width: 0; max-width: 100%; overflow: visible !important;">
+    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0 pr-2 sm:pr-4 lg:pr-6" style="min-width: 0; overflow: visible !important;">
         <!-- Balance (Non-Admin) -->
         @if (auth()->check() && auth()->user()->role !== 'admin')
-            <div class="hidden sm:flex items-center gap-1 rounded-lg bg-gray-700 px-2 py-1 transition-all duration-200 hover:bg-gray-600 hover:shadow-lg hover:scale-105 flex-shrink-0">
-                <svg class="h-3.5 w-3.5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                </svg>
-                <span class="text-xs font-semibold text-white whitespace-nowrap">Rp {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}</span>
+            <div class="flex items-center gap-2 rounded-lg bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-500/30 px-3 py-1.5 sm:px-4 sm:py-2 transition-all duration-200 hover:from-green-600/30 hover:to-emerald-600/30 hover:border-green-500/50 hover:shadow-lg hover:scale-105 flex-shrink-0">
+                <div class="flex flex-col">
+                    <span class="text-xs text-gray-400 leading-tight">Saldo</span>
+                    <span class="text-xs sm:text-sm font-bold text-green-400 whitespace-nowrap">Rp {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}</span>
+                </div>
             </div>
         @endif
 
         <!-- User Profile Dropdown -->
         @auth
         <div class="relative flex-shrink-0" x-data="{ open: false }" style="overflow: visible !important;">
-            <button @click="open = !open" class="flex items-center gap-1 rounded-lg px-1.5 py-1 text-gray-300 transition-all duration-200 hover:bg-gray-700 hover:text-white flex-shrink-0" style="min-width: 0; overflow: visible !important;">
-                <div class="h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center transition-all duration-200 hover:bg-blue-500 flex-shrink-0" style="flex-shrink: 0 !important;">
-                    <span class="text-xs font-semibold text-white">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+            <button @click="open = !open" class="flex items-center gap-2 sm:gap-3 rounded-lg bg-gray-700/50 hover:bg-gray-700 px-2 py-1.5 sm:px-3 sm:py-2 text-gray-300 transition-all duration-200 hover:text-white flex-shrink-0 border border-gray-600/50 hover:border-gray-500" style="min-width: 0; overflow: visible !important;">
+                <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center transition-all duration-200 hover:from-blue-400 hover:to-blue-500 flex-shrink-0 shadow-md" style="flex-shrink: 0 !important;">
+                    <span class="text-sm sm:text-base font-bold text-white">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
                 </div>
-                <div class="hidden xl:block text-left flex-shrink-0 min-w-0" style="max-width: 120px; flex-shrink: 0;">
-                    <p class="text-xs font-medium text-white truncate leading-tight">{{ auth()->user()->name ?? 'User' }}</p>
+                <div class="block text-left flex-shrink-0 min-w-0" style="max-width: 150px; flex-shrink: 0;">
+                    <p class="text-xs sm:text-sm font-semibold text-white truncate leading-tight">{{ auth()->user()->name ?? 'User' }}</p>
                     <p class="text-xs text-gray-400 capitalize truncate leading-tight">{{ auth()->user()->role ?? 'user' }}</p>
                 </div>
-                <svg class="h-3.5 w-3.5 text-gray-400 hidden xl:block flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 flex-shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
