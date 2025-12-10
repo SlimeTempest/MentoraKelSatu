@@ -92,7 +92,7 @@
                 <a href="{{ route('dashboard') }}" class="rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition-all duration-200 hover:bg-gray-600 hover:text-white">
                     Batal
                 </a>
-                <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-blue-500 hover:shadow-lg">
+                <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-gray-50 transition-all duration-200 hover:bg-blue-500 hover:shadow-lg hover:scale-105">
                     Simpan Perubahan
                 </button>
             </div>

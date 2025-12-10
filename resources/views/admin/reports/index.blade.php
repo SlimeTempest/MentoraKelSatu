@@ -12,24 +12,24 @@
         </div>
 
         @if ($pendingReports->isNotEmpty())
-            <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-6">
-                <h2 class="mb-4 text-lg font-semibold text-yellow-800">Laporan Pending ({{ $pendingReports->count() }})</h2>
+            <div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-6">
+                <h2 class="mb-4 text-lg font-semibold text-amber-300">Laporan Pending ({{ $pendingReports->count() }})</h2>
                 <div class="space-y-3">
                     @foreach ($pendingReports as $report)
-                        <div class="rounded border border-yellow-200 bg-white p-4">
+                        <div class="rounded-lg border border-amber-500/30 bg-gray-800 p-4">
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
-                                    <p class="font-medium text-gray-900">
-                                        Dilaporkan oleh: <span class="text-indigo-600">{{ $report->reporter->name }}</span>
+                                    <p class="font-medium text-gray-100">
+                                        Dilaporkan oleh: <span class="text-indigo-400">{{ $report->reporter->name }}</span>
                                         @if ($report->reportedUser)
-                                            → <span class="text-red-600">{{ $report->reportedUser->name }}</span>
+                                            → <span class="text-red-400">{{ $report->reportedUser->name }}</span>
                                         @endif
                                     </p>
-                                    <p class="mt-2 text-sm text-gray-700">{{ Str::limit($report->description, 150) }}</p>
-                                    <p class="mt-2 text-xs text-gray-500">{{ $report->created_at->format('d M Y H:i') }}</p>
+                                    <p class="mt-2 text-sm text-gray-300">{{ Str::limit($report->description, 150) }}</p>
+                                    <p class="mt-2 text-xs text-gray-400">{{ $report->created_at->format('d M Y H:i') }}</p>
                                 </div>
                                 <div class="ml-4">
-                                    <a href="{{ route('admin.reports.show', $report) }}" class="rounded bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-500">
+                                    <a href="{{ route('admin.reports.show', $report) }}" class="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-gray-50 hover:bg-indigo-500 transition-all duration-200 hover:shadow-lg">
                                         Lihat Detail
                                     </a>
                                 </div>
@@ -73,13 +73,13 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @php
                                             $statusColors = [
-                                                'pending' => 'bg-yellow-500/20 text-yellow-300',
-                                                'on_review' => 'bg-blue-500/20 text-blue-300',
-                                                'done' => 'bg-green-500/20 text-green-300',
+                                                'pending' => 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+                                                'on_review' => 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                                                'done' => 'bg-green-500/20 text-green-300 border-green-500/30',
                                             ];
-                                            $color = $statusColors[$report->status] ?? 'bg-gray-500/20 text-gray-300';
+                                            $color = $statusColors[$report->status] ?? 'bg-gray-500/20 text-gray-300 border-gray-500/30';
                                         @endphp
-                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium capitalize {{ $color }}">
+                                        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize {{ $color }}">
                                             {{ str_replace('_', ' ', $report->status) }}
                                         </span>
                                     </td>
@@ -97,10 +97,10 @@
                     </table>
                 </div>
 
-                <div class="border-t border-gray-700 bg-gray-700/30 px-6 py-4">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-400">
-                            Showing {{ $allReports->firstItem() ?? 0 }} to {{ $allReports->lastItem() ?? 0 }} of {{ $allReports->total() }} results
+                <div class="border-t border-gray-700 bg-gray-700/30 px-4 sm:px-6 py-3 sm:py-4">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div class="text-xs sm:text-sm text-gray-400">
+                            Menampilkan {{ $allReports->firstItem() ?? 0 }} sampai {{ $allReports->lastItem() ?? 0 }} dari {{ $allReports->total() }} hasil
                         </div>
                         <div>
                             {{ $allReports->onEachSide(2)->links() }}
