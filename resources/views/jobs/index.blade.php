@@ -33,8 +33,12 @@
             <section>
                 @if (isset($allJobs) && $allJobs->isEmpty())
                     <div class="rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
-                        <div class="p-8 text-center">
-                            <p class="text-sm text-gray-400">Belum ada job di sistem.</p>
+                        <div class="p-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-base font-medium text-gray-300 mb-1">Belum ada job di sistem</p>
+                            <p class="text-sm text-gray-500">Job akan muncul di sini setelah dibuat oleh pengguna</p>
                         </div>
                     </div>
                 @else
@@ -43,30 +47,30 @@
                             <table class="min-w-full divide-y divide-gray-700 text-sm">
                                 <thead class="bg-gray-700/50">
                                     <tr>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Judul</th>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Dibuat Oleh</th>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Diambil Oleh</th>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Status</th>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Harga</th>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Deadline</th>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Kategori</th>
-                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
+                                        <th class="px-4 sm:px-6 py-3.5 sm:py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">
                                             Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-700 bg-gray-800">
                                     @foreach ($allJobs as $job)
-                                        <tr class="hover:bg-gray-700/50 transition-colors">
-                                            <td class="px-4 sm:px-6 py-3 sm:py-4">
-                                                <p class="font-semibold text-gray-100">{{ $job->title }}</p>
-                                                <p class="text-xs text-gray-400 mt-0.5">
+                                        <tr class="hover:bg-gray-700/50 transition-colors duration-150">
+                                            <td class="px-4 sm:px-6 py-4">
+                                                <p class="font-semibold text-gray-100 leading-tight">{{ $job->title }}</p>
+                                                <p class="text-xs text-gray-400 mt-1 line-clamp-2">
                                                     {{ Str::limit($job->description, 60) }}</p>
                                             </td>
                                             <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -101,12 +105,25 @@
                                                     {{ str_replace('_', ' ', $job->status) }}
                                                 </span>
                                             </td>
-                                            <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                                                <div class="text-sm font-semibold text-green-400">Rp
-                                                    {{ number_format($job->price, 0, ',', '.') }}</div>
+                                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center gap-1.5 text-sm font-semibold text-green-400">
+                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    <span>Rp {{ number_format($job->price, 0, ',', '.') }}</span>
+                                                </div>
                                             </td>
-                                            <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-400">
-                                                {{ $job->deadline ? $job->deadline->format('d M Y') : '-' }}
+                                            <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                @if ($job->deadline)
+                                                    <div class="flex items-center gap-1.5 text-sm text-gray-400">
+                                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        <span>{{ $job->deadline->format('d M Y') }}</span>
+                                                    </div>
+                                                @else
+                                                    <span class="text-sm text-gray-500">-</span>
+                                                @endif
                                             </td>
                                             <td class="px-4 sm:px-6 py-3 sm:py-4">
                                                 <div class="flex flex-wrap gap-1.5">
@@ -181,49 +198,82 @@
         {{-- User View --}}
         <div class="space-y-8">
             <section>
-                <header class="mb-4">
-                    <h2 class="text-xl font-bold text-white">Job Tersedia</h2>
-                    <p class="text-sm text-gray-400 mt-1">Job yang belum diambil. Kamu bisa ambil maksimal 2 sekaligus.</p>
+                <header class="mb-5">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2 rounded-lg bg-green-500/20 border border-green-500/30">
+                            <svg class="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Job Tersedia</h2>
+                    </div>
+                    <p class="text-sm text-gray-400 ml-12">Job yang belum diambil. Kamu bisa ambil maksimal 2 sekaligus.</p>
                 </header>
 
                 @if ($availableJobs->isEmpty())
-                    <p class="text-sm text-gray-400">Belum ada job tersedia.</p>
+                    <div class="rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
+                        <div class="p-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                            </svg>
+                            <p class="text-base font-medium text-gray-300 mb-1">Belum ada job tersedia</p>
+                            <p class="text-sm text-gray-500">Job yang tersedia akan muncul di sini</p>
+                        </div>
+                    </div>
                 @else
-                    <div class="divide-y divide-gray-700 rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
+                    <div class="space-y-3">
                         @foreach ($availableJobs as $job)
-                            <article class="p-4 hover:bg-gray-700/50 transition-colors">
-                                <div class="flex flex-wrap items-start justify-between gap-4">
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm uppercase text-gray-400">
-                                            Dibuat oleh
-                                            <a href="{{ route('users.profile.show', $job->creator) }}"
-                                                class="font-semibold text-indigo-400 hover:text-indigo-300 hover:underline transition-colors">
-                                                {{ $job->creator->name }}
-                                            </a>
-                                        </p>
-                                        <h3 class="text-lg font-semibold text-gray-100 mt-1">{{ $job->title }}</h3>
-                                        <p class="mt-2 text-sm text-gray-300">{{ Str::limit($job->description, 160) }}</p>
-                                        <div class="mt-2 flex flex-wrap gap-2">
-                                            <span class="rounded-full bg-green-500/20 border border-green-500/30 px-2.5 py-0.5 text-xs font-medium text-green-300">Rp
-                                                {{ number_format($job->price, 0, ',', '.') }}</span>
-                                            @if ($job->deadline)
-                                                <span
-                                                    class="rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-xs font-medium text-amber-300">Deadline
-                                                    {{ $job->deadline->format('d M Y') }}</span>
-                                            @endif
-                                            @foreach ($job->categories as $category)
-                                                <span
-                                                    class="rounded-full bg-indigo-500/20 border border-indigo-500/30 px-2.5 py-0.5 text-xs font-medium text-indigo-300">{{ $category->name }}</span>
-                                            @endforeach
+                            <article class="rounded-lg border border-gray-700 bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 hover:border-gray-600">
+                                <div class="p-5">
+                                    <div class="flex flex-col sm:flex-row items-start justify-between gap-4">
+                                        <div class="flex-1 min-w-0 w-full sm:w-auto">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <svg class="h-4 w-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                                <p class="text-xs uppercase tracking-wide text-gray-500">
+                                                    Dibuat oleh
+                                                    <a href="{{ route('users.profile.show', $job->creator) }}"
+                                                        class="font-semibold text-indigo-400 hover:text-indigo-300 hover:underline transition-colors">
+                                                        {{ $job->creator->name }}
+                                                    </a>
+                                                </p>
+                                            </div>
+                                            <h3 class="text-lg font-bold text-gray-100 mb-2 leading-tight">{{ $job->title }}</h3>
+                                            <p class="text-sm text-gray-300 mb-4 leading-relaxed line-clamp-2">{{ Str::limit($job->description, 160) }}</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span class="inline-flex items-center gap-1.5 rounded-full bg-green-500/20 border border-green-500/30 px-3 py-1 text-xs font-medium text-green-300">
+                                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    Rp {{ number_format($job->price, 0, ',', '.') }}
+                                                </span>
+                                                @if ($job->deadline)
+                                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 px-3 py-1 text-xs font-medium text-amber-300">
+                                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        {{ $job->deadline->format('d M Y') }}
+                                                    </span>
+                                                @endif
+                                                @foreach ($job->categories as $category)
+                                                    <span class="inline-flex items-center rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-xs font-medium text-indigo-300">
+                                                        {{ $category->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
                                         </div>
+                                        <form action="{{ route('jobs.take', $job) }}" method="POST" class="flex-shrink-0">
+                                            @csrf
+                                            <button type="submit"
+                                                class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-gray-50 hover:bg-green-500 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95">
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                Ambil Job
+                                            </button>
+                                        </form>
                                     </div>
-                                    <form action="{{ route('jobs.take', $job) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            class="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-gray-50 hover:bg-green-500 transition-all duration-200 hover:shadow-lg hover:scale-105">
-                                            Ambil Job
-                                        </button>
-                                    </form>
                                 </div>
                             </article>
                         @endforeach
@@ -240,13 +290,28 @@
             </section>
 
             <section>
-                <header class="mb-4">
-                    <h2 class="text-xl font-bold text-white">Job Saya</h2>
-                    <p class="text-sm text-gray-400 mt-1">Job yang kamu buat</p>
+                <header class="mb-5">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2 rounded-lg bg-blue-500/20 border border-blue-500/30">
+                            <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Job Saya</h2>
+                    </div>
+                    <p class="text-sm text-gray-400 ml-12">Job yang kamu buat</p>
                 </header>
 
                 @if ($myJobs->isEmpty())
-                    <p class="text-sm text-gray-400">Belum ada job yang kamu buat.</p>
+                    <div class="rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
+                        <div class="p-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-base font-medium text-gray-300 mb-1">Belum ada job yang kamu buat</p>
+                            <p class="text-sm text-gray-500">Mulai buat job baru untuk mendapatkan bantuan</p>
+                        </div>
+                    </div>
                 @else
                     <div class="overflow-x-auto rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
                         <table class="min-w-full divide-y divide-gray-700 text-sm">
@@ -260,10 +325,10 @@
                             </thead>
                             <tbody class="divide-y divide-gray-700 bg-gray-800">
                                 @foreach ($myJobs as $job)
-                                    <tr class="hover:bg-gray-700/50 transition-colors">
-                                        <td class="px-4 py-3">
-                                            <p class="font-medium text-gray-100">{{ $job->title }}</p>
-                                            <p class="text-xs text-gray-400 mt-0.5">{{ Str::limit($job->description, 80) }}</p>
+                                    <tr class="hover:bg-gray-700/50 transition-colors duration-150">
+                                        <td class="px-4 py-4">
+                                            <p class="font-semibold text-gray-100 leading-tight">{{ $job->title }}</p>
+                                            <p class="text-xs text-gray-400 mt-1.5 line-clamp-2">{{ Str::limit($job->description, 80) }}</p>
                                         </td>
                                         <td class="px-4 py-3">
                                             @php
@@ -316,28 +381,18 @@
                                                 @endcan
                                                 @if ($job->status === \App\Models\Job::STATUS_DONE && $job->assignee && !$job->feedback)
                                                     <a href="{{ route('jobs.feedback.create', $job) }}"
-                                                        class="inline-flex items-center gap-1 rounded-lg bg-yellow-500/20 border border-yellow-500/30 px-2 py-1 text-yellow-300 hover:bg-yellow-500/30 transition-colors">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14"
-                                                            height="14" viewBox="0 0 24 24" fill="currentColor"
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round">
-                                                            <polygon
-                                                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                        class="inline-flex items-center gap-1.5 rounded-lg bg-yellow-500/20 border border-yellow-500/30 px-2.5 py-1.5 text-xs font-medium text-yellow-300 hover:bg-yellow-500/30 transition-colors">
+                                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
                                                         </svg>
                                                         Rating
                                                     </a>
                                                 @endif
                                                 @if ($job->status === \App\Models\Job::STATUS_DONE && $job->assignee)
                                                     <a href="{{ route('reports.create', ['job_id' => $job->job_id]) }}"
-                                                        class="inline-flex items-center gap-1 rounded-lg border border-orange-500/30 bg-orange-500/20 px-2 py-1 text-orange-300 hover:bg-orange-500/30 transition-colors">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14"
-                                                            height="14" viewBox="0 0 24 24" fill="none"
-                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round">
-                                                            <path
-                                                                d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                                                            <line x1="4" x2="4" y1="22"
-                                                                y2="15" />
+                                                        class="inline-flex items-center gap-1.5 rounded-lg border border-orange-500/30 bg-orange-500/20 px-2.5 py-1.5 text-xs font-medium text-orange-300 hover:bg-orange-500/30 transition-colors">
+                                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                                         </svg>
                                                         Laporkan
                                                     </a>
@@ -361,68 +416,95 @@
             </section>
 
             <section>
-                <header class="mb-4">
-                    <h2 class="text-xl font-bold text-white">Job yang Saya Kerjakan</h2>
-                    <p class="text-sm text-gray-400 mt-1">Job yang sedang atau pernah kamu ambil</p>
+                <header class="mb-5">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2 rounded-lg bg-purple-500/20 border border-purple-500/30">
+                            <svg class="h-5 w-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Job yang Saya Kerjakan</h2>
+                    </div>
+                    <p class="text-sm text-gray-400 ml-12">Job yang sedang atau pernah kamu ambil</p>
                 </header>
 
                 @if ($assignedJobs->isEmpty())
-                    <p class="text-sm text-gray-400">Belum ada job yang kamu kerjakan.</p>
+                    <div class="rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
+                        <div class="p-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                            <p class="text-base font-medium text-gray-300 mb-1">Belum ada job yang kamu kerjakan</p>
+                            <p class="text-sm text-gray-500">Ambil job dari "Job Tersedia" untuk mulai bekerja</p>
+                        </div>
+                    </div>
                 @else
-                    <div class="divide-y divide-gray-700 rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
+                    <div class="space-y-3">
                         @foreach ($assignedJobs as $job)
-                            <article class="p-4 hover:bg-gray-700/50 transition-colors">
-                                <div class="flex flex-wrap items-start justify-between gap-4">
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm uppercase text-gray-400">
-                                            Dari
-                                            <a href="{{ route('users.profile.show', $job->creator) }}"
-                                                class="font-semibold text-indigo-400 hover:text-indigo-300 hover:underline transition-colors">
-                                                {{ $job->creator->name }}
-                                            </a>
-                                        </p>
-                                        <h3 class="text-lg font-semibold text-gray-100 mt-1">{{ $job->title }}</h3>
-                                        <p class="mt-2 text-sm text-gray-300">{{ Str::limit($job->description, 160) }}</p>
-                                        <div class="mt-2 flex flex-wrap gap-2">
-                                            @php
-                                                $statusColors = [
-                                                    'belum_diambil' => 'bg-gray-500/20 text-gray-300 border-gray-500/30',
-                                                    'on_progress' => 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-                                                    'selesai' => 'bg-green-500/20 text-green-300 border-green-500/30',
-                                                    'kadaluarsa' => 'bg-red-500/20 text-red-300 border-red-500/30',
-                                                ];
-                                                $color = $statusColors[$job->status] ?? 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-                                            @endphp
-                                            <span class="rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize {{ $color }}">{{ str_replace('_', ' ', $job->status) }}</span>
-                                            @if ($job->deadline)
-                                                <span
-                                                    class="rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 text-xs font-medium text-amber-300">Deadline
-                                                    {{ $job->deadline->format('d M Y') }}</span>
+                            <article class="rounded-lg border border-gray-700 bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 hover:border-gray-600">
+                                <div class="p-5">
+                                    <div class="flex flex-col sm:flex-row items-start justify-between gap-4">
+                                        <div class="flex-1 min-w-0 w-full sm:w-auto">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <svg class="h-4 w-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                                <p class="text-xs uppercase tracking-wide text-gray-500">
+                                                    Dari
+                                                    <a href="{{ route('users.profile.show', $job->creator) }}"
+                                                        class="font-semibold text-indigo-400 hover:text-indigo-300 hover:underline transition-colors">
+                                                        {{ $job->creator->name }}
+                                                    </a>
+                                                </p>
+                                            </div>
+                                            <h3 class="text-lg font-bold text-gray-100 mb-2 leading-tight">{{ $job->title }}</h3>
+                                            <p class="text-sm text-gray-300 mb-4 leading-relaxed line-clamp-2">{{ Str::limit($job->description, 160) }}</p>
+                                            <div class="flex flex-wrap gap-2">
+                                                @php
+                                                    $statusColors = [
+                                                        'belum_diambil' => 'bg-gray-500/20 text-gray-300 border-gray-500/30',
+                                                        'on_progress' => 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                                                        'selesai' => 'bg-green-500/20 text-green-300 border-green-500/30',
+                                                        'kadaluarsa' => 'bg-red-500/20 text-red-300 border-red-500/30',
+                                                    ];
+                                                    $color = $statusColors[$job->status] ?? 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+                                                @endphp
+                                                <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium capitalize {{ $color }}">
+                                                    {{ str_replace('_', ' ', $job->status) }}
+                                                </span>
+                                                @if ($job->deadline)
+                                                    <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 border border-amber-500/30 px-3 py-1 text-xs font-medium text-amber-300">
+                                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                        {{ $job->deadline->format('d M Y') }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2 flex-shrink-0">
+                                            @if ($job->status === \App\Models\Job::STATUS_PROGRESS)
+                                                <form action="{{ route('jobs.complete', $job) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-gray-50 hover:bg-indigo-500 transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95">
+                                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                        </svg>
+                                                        Tandai Selesai
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            @if ($job->status === \App\Models\Job::STATUS_DONE)
+                                                <a href="{{ route('reports.create', ['job_id' => $job->job_id]) }}"
+                                                    class="inline-flex items-center gap-2 rounded-lg border border-orange-500/30 bg-orange-500/20 px-4 py-2.5 text-sm font-semibold text-orange-300 hover:bg-orange-500/30 transition-all duration-200">
+                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                                    </svg>
+                                                    Laporkan
+                                                </a>
                                             @endif
                                         </div>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        @if ($job->status === \App\Models\Job::STATUS_PROGRESS)
-                                            <form action="{{ route('jobs.complete', $job) }}" method="POST">
-                                                @csrf
-                                                <button type="submit"
-                                                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-gray-50 hover:bg-indigo-500 transition-all duration-200 hover:shadow-lg hover:scale-105">
-                                                    Tandai Selesai
-                                                </button>
-                                            </form>
-                                        @endif
-                                        @if ($job->status === \App\Models\Job::STATUS_DONE)
-                                            <a href="{{ route('reports.create', ['job_id' => $job->job_id]) }}"
-                                                class="inline-flex items-center gap-1.5 rounded-lg border border-orange-500/30 bg-orange-500/20 px-3 py-1.5 text-sm font-semibold text-orange-300 hover:bg-orange-500/30 transition-all duration-200">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-                                                    <line x1="4" x2="4" y1="22" y2="15" />
-                                                </svg>
-                                                Laporkan
-                                            </a>
-                                        @endif
                                     </div>
                                 </div>
                             </article>
