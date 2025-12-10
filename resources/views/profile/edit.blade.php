@@ -22,13 +22,12 @@
                     <div>
                         <label class="mb-2 block text-sm font-medium text-gray-300">Foto Profil</label>
                         <div class="flex items-center gap-4">
-                            <div id="photo-preview" class="relative">
+                            <div id="photo-preview" class="relative h-24 w-24 rounded-full border-2 border-gray-600 overflow-hidden bg-blue-500/20 flex items-center justify-center">
                                 @if ($user->photo)
-                                    <img id="preview-img" src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="h-24 w-24 rounded-full object-cover border-2 border-gray-600">
+                                    <img id="preview-img" src="{{ $user->photo_url }}?v={{ time() }}" alt="{{ $user->name }}" class="h-full w-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div id="preview-initial" class="hidden text-3xl font-semibold text-blue-400">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                                 @else
-                                    <div id="preview-initial" class="flex h-24 w-24 items-center justify-center rounded-full bg-blue-500/20 text-3xl font-semibold text-blue-400 border-2 border-gray-600">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                                    </div>
+                                    <div id="preview-initial" class="text-3xl font-semibold text-blue-400">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                                 @endif
                             </div>
                             <div class="flex-1">

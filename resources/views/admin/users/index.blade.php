@@ -157,12 +157,21 @@
                 </div>
 
                 <div class="border-t border-gray-700 bg-gray-700/30 px-4 sm:px-6 py-3 sm:py-4">
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <div class="text-xs sm:text-sm text-gray-400">
-                            Menampilkan {{ $users->firstItem() ?? 0 }} sampai {{ $users->lastItem() ?? 0 }} dari {{ $users->total() }} hasil
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <!-- Info Jumlah Data -->
+                        <div class="text-sm text-gray-400">
+                            Menampilkan 
+                            <span class="font-semibold text-gray-300">{{ $users->firstItem() ?? 0 }}</span>
+                            sampai 
+                            <span class="font-semibold text-gray-300">{{ $users->lastItem() ?? 0 }}</span>
+                            dari 
+                            <span class="font-semibold text-gray-300">{{ $users->total() }}</span>
+                            data
                         </div>
-                        <div>
-                            {{ $users->appends(request()->query())->onEachSide(2)->links() }}
+
+                        <!-- Pagination -->
+                        <div class="flex items-center gap-2">
+                            {{ $users->appends(request()->query())->links('pagination::default') }}
                         </div>
                     </div>
                 </div>

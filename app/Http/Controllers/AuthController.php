@@ -73,11 +73,8 @@ class AuthController extends Controller
             'recovery_code' => $recoveryCode,
         ]);
 
-        // Refresh user dan login dengan data terbaru
-        Auth::login($user->fresh(), true);
-        $request->session()->regenerate();
-
-        return redirect('/dashboard');
+        // Redirect ke halaman login dengan pesan sukses
+        return redirect()->route('login')->with('status', 'Akun berhasil dibuat! Silakan login dengan email dan password Anda.');
     }
 
     public function showForgotPasswordForm()

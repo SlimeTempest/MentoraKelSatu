@@ -22,15 +22,26 @@
 
         <!-- User Profile Dropdown -->
         @auth
+        @php
+            // Pastikan menggunakan data terbaru dari database
+            $currentUser = auth()->user()->fresh();
+        @endphp
         <div class="relative flex-shrink-0" x-data="{ open: false }" style="overflow: visible !important;">
             <button @click="open = !open" class="flex items-center gap-2 sm:gap-3 rounded-lg bg-gray-700/50 hover:bg-gray-700 px-2 py-1.5 sm:px-3 sm:py-2 text-gray-300 transition-all duration-200 hover:text-white flex-shrink-0 border border-gray-600/50 hover:border-gray-500" style="min-width: 0; overflow: visible !important;">
-                <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center transition-all duration-200 hover:from-blue-400 hover:to-blue-500 flex-shrink-0 shadow-md" style="flex-shrink: 0 !important;">
-                    <span class="text-sm sm:text-base font-bold text-white">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                <div class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center transition-all duration-200 hover:from-blue-400 hover:to-blue-500 flex-shrink-0 shadow-md overflow-hidden" style="flex-shrink: 0 !important;">
+                    @if ($currentUser->photo)
+                        <img src="{{ $currentUser->photo_url }}?v={{ time() }}" alt="{{ $currentUser->name }}" class="h-full w-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <span class="hidden text-sm sm:text-base font-bold text-white">{{ strtoupper(substr($currentUser->name ?? 'U', 0, 1)) }}</span>
+                    @else
+                        <span class="text-sm sm:text-base font-bold text-white">{{ strtoupper(substr($currentUser->name ?? 'U', 0, 1)) }}</span>
+                    @endif
                 </div>
-                <div class="block text-left flex-shrink-0 min-w-0" style="max-width: 150px; flex-shrink: 0;">
-                    <p class="text-xs sm:text-sm font-semibold text-white truncate leading-tight">{{ auth()->user()->name ?? 'User' }}</p>
-                    <p class="text-xs text-gray-400 capitalize truncate leading-tight">{{ auth()->user()->role ?? 'user' }}</p>
-                </div>
+                @if ($currentUser->role === 'admin' || $currentUser->role === 'dosen')
+                    <div class="block text-left flex-shrink-0 min-w-0" style="max-width: 150px; flex-shrink: 0;">
+                        <p class="text-xs sm:text-sm font-semibold text-white truncate leading-tight">{{ $currentUser->name ?? 'User' }}</p>
+                        <p class="text-xs text-gray-400 capitalize truncate leading-tight">{{ $currentUser->role ?? 'user' }}</p>
+                    </div>
+                @endif
                 <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 flex-shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>

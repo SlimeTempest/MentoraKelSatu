@@ -13,7 +13,7 @@ class TopupController extends Controller
         $topups = $request->user()
             ->topups()
             ->latest()
-            ->get();
+            ->paginate(10);
 
         return view('topups.index', compact('topups'));
     }

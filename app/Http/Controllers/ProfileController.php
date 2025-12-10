@@ -79,6 +79,12 @@ class ProfileController extends Controller
 
             // Store new photo
             $data['photo'] = $request->file('photo')->store('profiles', 'public');
+            
+            \Log::info('Profile photo uploaded', [
+                'user_id' => $user->user_id,
+                'photo_path' => $data['photo'],
+                'storage_exists' => Storage::disk('public')->exists($data['photo']),
+            ]);
         } else {
             // Don't update photo if not provided
             unset($data['photo']);
@@ -107,6 +113,9 @@ class ProfileController extends Controller
             'email' => $user->email,
             'phone' => $user->phone,
             'photo' => $user->photo ? 'exists' : 'null',
+            'photo_path' => $user->photo,
+            'photo_url' => $user->photo ? $user->photo_url : 'null',
+            'storage_exists' => $user->photo && !filter_var($user->photo, FILTER_VALIDATE_URL) ? Storage::disk('public')->exists($user->photo) : 'N/A',
         ]);
         
         // Refresh session dengan data user terbaru

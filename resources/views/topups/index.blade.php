@@ -71,6 +71,25 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination & Info -->
+        <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <!-- Info Jumlah Data -->
+            <div class="text-sm text-gray-400">
+                Menampilkan 
+                <span class="font-semibold text-gray-300">{{ $topups->firstItem() ?? 0 }}</span>
+                sampai 
+                <span class="font-semibold text-gray-300">{{ $topups->lastItem() ?? 0 }}</span>
+                dari 
+                <span class="font-semibold text-gray-300">{{ $topups->total() }}</span>
+                data
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex items-center gap-2">
+                {{ $topups->links('pagination::default') }}
+            </div>
+        </div>
     @endif
 @endsection
 

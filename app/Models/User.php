@@ -116,4 +116,23 @@ class User extends Authenticatable
     {
         return $this->hasMany(RedeemCode::class, 'claimed_by', 'user_id');
     }
+
+    /**
+     * Get the photo URL (handles both local storage and Google URL)
+     */
+    public function getPhotoUrlAttribute()
+    {
+        if (!$this->photo) {
+            return null;
+        }
+
+        // Check if photo is a URL (Google photo) or local path
+        if (filter_var($this->photo, FILTER_VALIDATE_URL)) {
+            // It's a Google photo URL, return as is
+            return $this->photo;
+        }
+
+        // It's a local photo, use Storage::url
+        return \Illuminate\Support\Facades\Storage::url($this->photo);
+    }
 }

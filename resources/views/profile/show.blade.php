@@ -22,13 +22,14 @@
             {{-- Profile Card --}}
             <div class="rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-lg">
                 <div class="text-center">
+                    <div class="mx-auto mb-4 h-24 w-24 rounded-full border-2 border-gray-600 overflow-hidden bg-blue-500/20 flex items-center justify-center">
                     @if ($user->photo)
-                        <img src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="mx-auto mb-4 h-24 w-24 rounded-full object-cover border-2 border-gray-600">
+                            <img src="{{ $user->photo_url }}?v={{ time() }}" alt="{{ $user->name }}" class="h-full w-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="hidden text-3xl font-semibold text-blue-400">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
                     @else
-                        <div class="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-blue-500/20 text-3xl font-semibold text-blue-400 border-2 border-gray-600">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                            <div class="text-3xl font-semibold text-blue-400">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+                        @endif
                         </div>
-                    @endif
                     <h2 class="text-xl font-semibold text-white">{{ $user->name }}</h2>
                     <span class="mt-2 inline-block rounded-full bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300 capitalize">
                         {{ $user->role }}

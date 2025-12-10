@@ -98,12 +98,21 @@
                 </div>
 
                 <div class="border-t border-gray-700 bg-gray-700/30 px-4 sm:px-6 py-3 sm:py-4">
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <div class="text-xs sm:text-sm text-gray-400">
-                            Menampilkan {{ $allReports->firstItem() ?? 0 }} sampai {{ $allReports->lastItem() ?? 0 }} dari {{ $allReports->total() }} hasil
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <!-- Info Jumlah Data -->
+                        <div class="text-sm text-gray-400">
+                            Menampilkan 
+                            <span class="font-semibold text-gray-300">{{ $allReports->firstItem() ?? 0 }}</span>
+                            sampai 
+                            <span class="font-semibold text-gray-300">{{ $allReports->lastItem() ?? 0 }}</span>
+                            dari 
+                            <span class="font-semibold text-gray-300">{{ $allReports->total() }}</span>
+                            data
                         </div>
-                        <div>
-                            {{ $allReports->onEachSide(2)->links() }}
+
+                        <!-- Pagination -->
+                        <div class="flex items-center gap-2">
+                            {{ $allReports->links('pagination::default') }}
                         </div>
                     </div>
                 </div>

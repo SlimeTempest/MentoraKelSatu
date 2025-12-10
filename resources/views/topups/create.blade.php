@@ -97,9 +97,38 @@
                     name="bukti_pembayaran"
                     accept="image/jpeg,image/png,image/jpg"
                     required
+                    onchange="previewImage(this)"
                     class="block w-full text-sm text-gray-400 file:mr-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-gray-50 hover:file:bg-indigo-500 transition-colors"
                 >
                 <p class="mt-1 text-xs text-gray-400">Format: JPG, PNG (Maks. 2MB)</p>
+                
+                <!-- Preview Image -->
+                <div id="image-preview-container" class="mt-4 hidden">
+                    <div class="relative rounded-lg border border-gray-600 bg-gray-700/50 p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-sm font-medium text-gray-300">Preview Bukti Pembayaran</p>
+                            <button
+                                type="button"
+                                onclick="removePreview()"
+                                class="text-gray-400 hover:text-red-400 transition-colors"
+                            >
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="relative rounded-lg overflow-hidden border border-gray-600 bg-gray-800">
+                            <img
+                                id="image-preview"
+                                src=""
+                                alt="Preview Bukti Pembayaran"
+                                class="w-full h-auto max-h-96 object-contain"
+                            >
+                        </div>
+                        <p id="image-name" class="mt-2 text-xs text-gray-400 truncate"></p>
+                    </div>
+                </div>
+                
                 @error('bukti_pembayaran')
                     <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                 @enderror
@@ -156,6 +185,59 @@
                 });
             });
         });
+
+        // Preview Image Function
+        function previewImage(input) {
+            const container = document.getElementById('image-preview-container');
+            const preview = document.getElementById('image-preview');
+            const imageName = document.getElementById('image-name');
+            const fileInput = document.getElementById('bukti_pembayaran');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validasi ukuran file (2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Ukuran file terlalu besar. Maksimal 2MB.');
+                    fileInput.value = '';
+                    removePreview();
+                    return;
+                }
+
+                // Validasi tipe file
+                if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+                    alert('Format file tidak didukung. Hanya JPG dan PNG yang diizinkan.');
+                    fileInput.value = '';
+                    removePreview();
+                    return;
+                }
+
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    imageName.textContent = 'File: ' + file.name + ' (' + (file.size / 1024).toFixed(2) + ' KB)';
+                    container.classList.remove('hidden');
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                removePreview();
+            }
+        }
+
+        // Remove Preview Function
+        function removePreview() {
+            const container = document.getElementById('image-preview-container');
+            const preview = document.getElementById('image-preview');
+            const imageName = document.getElementById('image-name');
+            const fileInput = document.getElementById('bukti_pembayaran');
+            
+            container.classList.add('hidden');
+            preview.src = '';
+            imageName.textContent = '';
+            fileInput.value = '';
+        }
     </script>
 @endsection
 
