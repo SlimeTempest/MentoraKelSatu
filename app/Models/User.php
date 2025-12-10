@@ -106,4 +106,14 @@ class User extends Authenticatable
         $avgRating = $this->feedbacksReceived()->avg('rating') ?? 0;
         $this->update(['avg_rating' => round($avgRating, 2)]);
     }
+
+    public function redeemCodesCreated()
+    {
+        return $this->hasMany(RedeemCode::class, 'created_by', 'user_id');
+    }
+
+    public function redeemCodesClaimed()
+    {
+        return $this->hasMany(RedeemCode::class, 'claimed_by', 'user_id');
+    }
 }

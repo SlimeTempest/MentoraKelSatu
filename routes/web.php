@@ -10,6 +10,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\JobAssignmentController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RedeemCodeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TopupController;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,15 @@ Route::middleware('auth')->group(function () {
     Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
 
     Route::resource('topups', TopupController::class)->only(['index', 'create', 'store']);
+
+    // Redeem Codes - Dosen can create/list, Mahasiswa can claim
+    Route::prefix('redeem-codes')->name('redeem-codes.')->group(function () {
+        Route::get('/', [RedeemCodeController::class, 'index'])->name('index');
+        Route::get('/create', [RedeemCodeController::class, 'create'])->name('create');
+        Route::post('/', [RedeemCodeController::class, 'store'])->name('store');
+        Route::get('/claim', [RedeemCodeController::class, 'claim'])->name('claim');
+        Route::post('/claim', [RedeemCodeController::class, 'claimStore'])->name('claim.store');
+    });
 
     Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

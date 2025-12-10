@@ -1,37 +1,37 @@
 <!-- Topbar -->
-<header class="fixed top-0 right-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-700 bg-gray-800 px-4 transition-all duration-300 lg:left-64">
-    <div class="flex items-center gap-4">
+<header class="fixed top-0 right-0 z-30 flex h-16 w-full items-center justify-between border-b border-gray-700 bg-gray-800 pl-2 pr-1 sm:pl-4 sm:pr-2 transition-all duration-300 lg:left-64" style="min-width: 0; overflow: visible !important;">
+    <div class="flex items-center gap-2 flex-shrink-0">
         <!-- Mobile Menu Button -->
-        <button id="sidebar-toggle" class="lg:hidden rounded-lg p-2 text-gray-300 transition-all duration-200 hover:bg-gray-700 hover:text-white hover:scale-110 active:scale-95">
+        <button id="sidebar-toggle" class="lg:hidden rounded-lg p-2 text-gray-300 transition-all duration-200 hover:bg-gray-700 hover:text-white hover:scale-110 active:scale-95 flex-shrink-0">
             <svg class="h-6 w-6 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
     </div>
 
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0" style="min-width: 0; max-width: 100%; overflow: visible !important;">
         <!-- Balance (Non-Admin) -->
         @if (auth()->check() && auth()->user()->role !== 'admin')
-            <div class="hidden sm:flex items-center gap-2 rounded-lg bg-gray-700 px-3 py-1.5 transition-all duration-200 hover:bg-gray-600 hover:shadow-lg hover:scale-105">
-                <svg class="h-4 w-4 text-green-400 transition-transform duration-200 hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="hidden sm:flex items-center gap-1 rounded-lg bg-gray-700 px-2 py-1 transition-all duration-200 hover:bg-gray-600 hover:shadow-lg hover:scale-105 flex-shrink-0">
+                <svg class="h-3.5 w-3.5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                 </svg>
-                <span class="text-sm font-semibold text-white">Rp {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}</span>
+                <span class="text-xs font-semibold text-white whitespace-nowrap">Rp {{ number_format(auth()->user()->balance ?? 0, 0, ',', '.') }}</span>
             </div>
         @endif
 
         <!-- User Profile Dropdown -->
         @auth
-        <div class="relative" x-data="{ open: false }">
-            <button @click="open = !open" class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-300 transition-all duration-200 hover:bg-gray-700 hover:text-white hover:scale-105 active:scale-95">
-                <div class="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center transition-all duration-200 hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/50">
-                    <span class="text-sm font-semibold text-white">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+        <div class="relative flex-shrink-0" x-data="{ open: false }" style="overflow: visible !important;">
+            <button @click="open = !open" class="flex items-center gap-1 rounded-lg px-1.5 py-1 text-gray-300 transition-all duration-200 hover:bg-gray-700 hover:text-white flex-shrink-0" style="min-width: 0; overflow: visible !important;">
+                <div class="h-7 w-7 rounded-full bg-blue-600 flex items-center justify-center transition-all duration-200 hover:bg-blue-500 flex-shrink-0" style="flex-shrink: 0 !important;">
+                    <span class="text-xs font-semibold text-white">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
                 </div>
-                <div class="hidden md:block text-left">
-                    <p class="text-sm font-medium text-white">{{ auth()->user()->name ?? 'User' }}</p>
-                    <p class="text-xs text-gray-400 capitalize">{{ auth()->user()->role ?? 'user' }}</p>
+                <div class="hidden xl:block text-left flex-shrink-0 min-w-0" style="max-width: 120px; flex-shrink: 0;">
+                    <p class="text-xs font-medium text-white truncate leading-tight">{{ auth()->user()->name ?? 'User' }}</p>
+                    <p class="text-xs text-gray-400 capitalize truncate leading-tight">{{ auth()->user()->role ?? 'user' }}</p>
                 </div>
-                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-3.5 w-3.5 text-gray-400 hidden xl:block flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
