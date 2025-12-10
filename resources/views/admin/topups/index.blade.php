@@ -7,7 +7,7 @@
     </div>
 
     @if ($errors->has('topup'))
-        <div class="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div class="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
             {{ $errors->first('topup') }}
         </div>
     @endif
@@ -31,6 +31,7 @@
                                 <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Status</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Tanggal</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Bukti</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-300">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-700 bg-gray-800">
@@ -49,18 +50,18 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @php
                                             $statusColors = [
-                                                'pending' => 'bg-amber-500/20 text-amber-300',
-                                                'approved' => 'bg-green-500/20 text-green-300',
-                                                'rejected' => 'bg-red-500/20 text-red-300',
+                                                'pending' => 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                                                'approved' => 'bg-green-500/20 text-green-300 border-green-500/30',
+                                                'rejected' => 'bg-red-500/20 text-red-300 border-red-500/30',
                                             ];
-                                            $color = $statusColors[$topup->status] ?? 'bg-gray-500/20 text-gray-300';
+                                            $color = $statusColors[$topup->status] ?? 'bg-gray-500/20 text-gray-300 border-gray-500/30';
                                             $statusLabels = [
                                                 'pending' => 'Menunggu',
                                                 'approved' => 'Disetujui',
                                                 'rejected' => 'Ditolak',
                                             ];
                                         @endphp
-                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium {{ $color }}">
+                                        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium {{ $color }}">
                                             {{ $statusLabels[$topup->status] ?? $topup->status }}
                                         </span>
                                     </td>
@@ -69,11 +70,58 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($topup->bukti_pembayaran)
-                                            <a href="{{ asset('storage/' . $topup->bukti_pembayaran) }}" target="_blank" class="text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors">
+                                            <a href="{{ asset('storage/' . $topup->bukti_pembayaran) }}" target="_blank" class="text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors hover:underline">
                                                 Lihat
                                             </a>
                                         @else
                                             <span class="text-xs text-gray-500">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right">
+                                        @if ($topup->status === 'pending')
+                                            <div x-data="{ open: false }" class="relative inline-block text-left">
+                                                <div>
+                                                    <button @click="open = !open" type="button" class="flex items-center justify-center rounded-lg border border-gray-600 bg-gray-700 p-2 text-gray-300 hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200" id="menu-button-{{ $topup->topup_id }}" aria-expanded="true" aria-haspopup="true">
+                                                        <span class="sr-only">Open options</span>
+                                                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                            <path d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div x-show="open" @click.away="open = false"
+                                                    x-transition:enter="transition ease-out duration-100"
+                                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                                    x-transition:enter-end="transform opacity-100 scale-100"
+                                                    x-transition:leave="transition ease-in duration-75"
+                                                    x-transition:leave-start="transform opacity-100 scale-100"
+                                                    x-transition:leave-end="transform opacity-0 scale-95"
+                                                    class="origin-top-right absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 border border-gray-700 ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                                                    role="menu" aria-orientation="vertical" aria-labelledby="menu-button-{{ $topup->topup_id }}" tabindex="-1"
+                                                    style="display: none;">
+                                                    <div class="py-1" role="none">
+                                                        <form action="{{ route('admin.topups.approve', $topup) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menyetujui topup ini? Saldo user akan ditambahkan.');" class="text-green-300 hover:bg-gray-700 hover:text-green-200 block w-full text-left px-4 py-2 text-sm transition-colors duration-200 flex items-center gap-2" role="menuitem" tabindex="-1">
+                                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                                                </svg>
+                                                                Setujui
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('admin.topups.reject', $topup) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menolak topup ini?');" class="text-red-300 hover:bg-gray-700 hover:text-red-200 block w-full text-left px-4 py-2 text-sm transition-colors duration-200 flex items-center gap-2" role="menuitem" tabindex="-1">
+                                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                                                                </svg>
+                                                                Tolak
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span class="text-xs text-gray-500">Sudah diproses</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -82,10 +130,10 @@
                     </table>
                 </div>
 
-                <div class="border-t border-gray-700 bg-gray-700/30 px-6 py-4">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-400">
-                            Showing {{ $allTopups->firstItem() ?? 0 }} to {{ $allTopups->lastItem() ?? 0 }} of {{ $allTopups->total() }} results
+                <div class="border-t border-gray-700 bg-gray-700/30 px-4 sm:px-6 py-3 sm:py-4">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div class="text-xs sm:text-sm text-gray-400">
+                            Menampilkan {{ $allTopups->firstItem() ?? 0 }} sampai {{ $allTopups->lastItem() ?? 0 }} dari {{ $allTopups->total() }} hasil
                         </div>
                         <div>
                             {{ $allTopups->onEachSide(2)->links() }}
