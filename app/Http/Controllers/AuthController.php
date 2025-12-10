@@ -25,7 +25,8 @@ class AuthController extends Controller
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {
-            $user = Auth::user();
+            // Refresh user dari database untuk memastikan data terbaru
+            $user = Auth::user()->fresh();
 
             // Cek apakah user ditangguhkan
             if ($user->is_suspended) {
@@ -35,6 +36,8 @@ class AuthController extends Controller
                 ])->onlyInput('email');
             }
 
+            // Refresh session dengan data user terbaru
+            Auth::login($user, $remember);
             $request->session()->regenerate();
 
             return redirect()->intended('/dashboard');
@@ -70,7 +73,8 @@ class AuthController extends Controller
             'recovery_code' => $recoveryCode,
         ]);
 
-        Auth::login($user);
+        // Refresh user dan login dengan data terbaru
+        Auth::login($user->fresh(), true);
         $request->session()->regenerate();
 
         return redirect('/dashboard');
@@ -171,21 +175,65 @@ class AuthController extends Controller
                     ]);
                 }
 
-                // Update photo jika ada perubahan
-                if ($googleUser->getAvatar() && $user->photo !== $googleUser->getAvatar()) {
-                    $user->update(['photo' => $googleUser->getAvatar()]);
+                // Jangan update photo jika user sudah punya photo lokal yang diupload
+                // Cek apakah photo adalah URL Google atau path lokal
+                $isLocalPhoto = $user->photo && !filter_var($user->photo, FILTER_VALIDATE_URL);
+                
+                // Log untuk debugging
+                \Log::info('Google OAuth: Existing user login', [
+                    'user_id' => $user->user_id,
+                    'has_photo' => !empty($user->photo),
+                    'is_local_photo' => $isLocalPhoto,
+                    'current_photo' => $user->photo ? substr($user->photo, 0, 50) : 'null',
+                    'google_avatar' => $googleUser->getAvatar() ? 'provided' : 'null',
+                ]);
+                
+                // Hanya update photo jika:
+                // 1. User belum punya photo, ATAU
+                // 2. Photo saat ini masih URL Google (belum diupload foto lokal)
+                if ($googleUser->getAvatar() && !$isLocalPhoto) {
+                    // Jika user belum punya photo atau photo masih dari Google, update dengan Google avatar
+                    if (!$user->photo || filter_var($user->photo, FILTER_VALIDATE_URL)) {
+                        $user->update(['photo' => $googleUser->getAvatar()]);
+                        \Log::info('Google OAuth: Photo updated from Google', ['user_id' => $user->user_id]);
+                    }
+                } else {
+                    \Log::info('Google OAuth: Photo NOT updated (local photo exists)', ['user_id' => $user->user_id]);
                 }
+                
+                // JANGAN UPDATE name, email, phone, atau field lain - biarkan data user yang sudah diubah tetap ada
+                
+                // Refresh user dari database untuk memastikan data terbaru
+                $user = $user->fresh();
+                
+                // Log untuk verifikasi data user setelah refresh
+                \Log::info('Google OAuth: User data after refresh', [
+                    'user_id' => $user->user_id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone ?? 'null',
+                    'photo' => $user->photo ? substr($user->photo, 0, 50) : 'null',
+                ]);
             } else {
                 // Cek apakah email sudah terdaftar (login biasa)
                 $existingUser = User::where('email', $googleUser->getEmail())->first();
 
                 if ($existingUser) {
                     // Email sudah terdaftar, link Google account
-                    $existingUser->update([
-                        'google_id' => $googleUser->getId(),
-                        'photo' => $googleUser->getAvatar() ?? $existingUser->photo,
-                    ]);
-                    $user = $existingUser;
+                    // Jangan overwrite data yang sudah ada, hanya link google_id
+                    $updateData = ['google_id' => $googleUser->getId()];
+                    
+                    // Hanya update photo jika user belum punya photo lokal
+                    $isLocalPhoto = $existingUser->photo && !filter_var($existingUser->photo, FILTER_VALIDATE_URL);
+                    if ($googleUser->getAvatar() && !$isLocalPhoto) {
+                        // Jika belum ada photo atau photo masih URL Google, gunakan Google avatar
+                        if (!$existingUser->photo || filter_var($existingUser->photo, FILTER_VALIDATE_URL)) {
+                            $updateData['photo'] = $googleUser->getAvatar();
+                        }
+                    }
+                    
+                    $existingUser->update($updateData);
+                    $user = $existingUser->fresh();
                 } else {
                     // User baru, buat akun baru (Auto-register)
                     // Generate recovery code
@@ -222,8 +270,8 @@ class AuthController extends Controller
                 }
             }
 
-            // Login user
-            Auth::login($user, true);
+            // Login user dan refresh untuk memastikan data terbaru
+            Auth::login($user->fresh(), true);
             $request->session()->regenerate();
 
             return redirect()->intended('/dashboard');

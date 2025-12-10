@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Job;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +15,8 @@ class ProfileController extends Controller
     public function show(User $user = null)
     {
         // Jika tidak ada user_id, tampilkan profile sendiri
-        $profileUser = $user ?? auth()->user();
+        // Gunakan fresh() untuk memastikan data terbaru dari database
+        $profileUser = $user ?? auth()->user()->fresh();
         
         $stats = [];
         
@@ -50,7 +52,7 @@ class ProfileController extends Controller
     public function edit()
     {
         return view('profile.edit', [
-            'user' => auth()->user(),
+            'user' => auth()->user()->fresh(), // Refresh dari database
         ]);
     }
 
@@ -67,9 +69,12 @@ class ProfileController extends Controller
 
         // Handle photo upload
         if ($request->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($user->photo && Storage::disk('public')->exists($user->photo)) {
-                Storage::disk('public')->delete($user->photo);
+            // Delete old photo if exists (hanya jika foto lokal, bukan URL Google)
+            if ($user->photo) {
+                $isLocalPhoto = !filter_var($user->photo, FILTER_VALIDATE_URL);
+                if ($isLocalPhoto && Storage::disk('public')->exists($user->photo)) {
+                    Storage::disk('public')->delete($user->photo);
+                }
             }
 
             // Store new photo
@@ -79,7 +84,33 @@ class ProfileController extends Controller
             unset($data['photo']);
         }
 
+        // Update data profile
         $user->update($data);
+        
+        // Log untuk debugging
+        \Log::info('Profile updated', [
+            'user_id' => $user->user_id,
+            'updated_fields' => array_keys($data),
+            'name' => $data['name'] ?? 'not updated',
+            'email' => $data['email'] ?? 'not updated',
+            'phone' => $data['phone'] ?? 'not updated',
+            'has_photo' => isset($data['photo']),
+        ]);
+        
+        // Refresh user dari database untuk memastikan data terbaru
+        $user = $user->fresh();
+        
+        // Log untuk verifikasi data setelah refresh
+        \Log::info('Profile after refresh', [
+            'user_id' => $user->user_id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'photo' => $user->photo ? 'exists' : 'null',
+        ]);
+        
+        // Refresh session dengan data user terbaru
+        Auth::login($user, true);
 
         return redirect()->route('profile.show')->with('status', 'Profile berhasil diperbarui.');
     }
