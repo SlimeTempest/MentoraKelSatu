@@ -59,7 +59,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 @if ($topup->bukti_pembayaran)
-                                    <a href="{{ asset('storage/' . $topup->bukti_pembayaran) }}" target="_blank" class="text-indigo-400 hover:text-indigo-300 hover:underline text-xs transition-colors">
+                                    <a href="{{ route('topups.proof', $topup) }}" target="_blank" class="text-indigo-400 hover:text-indigo-300 hover:underline text-xs transition-colors">
                                         Lihat
                                     </a>
                                 @else

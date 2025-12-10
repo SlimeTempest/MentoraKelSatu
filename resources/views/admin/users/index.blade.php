@@ -1,9 +1,5 @@
 @extends('layouts.app', ['title' => 'Kelola User'])
 
-@php
-    use Illuminate\Support\Facades\Storage;
-@endphp
-
 @section('content')
     <div class="space-y-6">
         <div class="flex items-center justify-between">
@@ -74,10 +70,8 @@
                                 <tr class="hover:bg-gray-700/50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
-                                            @if ($user->photo && Storage::exists($user->photo))
-                                                <img src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="h-12 w-12 rounded-full object-cover border-2 border-gray-600">
-                                            @elseif ($user->photo)
-                                                <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" class="h-12 w-12 rounded-full object-cover border-2 border-gray-600" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            @if ($user->photo)
+                                                <img src="{{ $user->photo_url }}?v={{ time() }}" alt="{{ $user->name }}" class="h-12 w-12 rounded-full object-cover border-2 border-gray-600" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                                 <div class="hidden h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white border-2 border-gray-600">
                                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                                 </div>

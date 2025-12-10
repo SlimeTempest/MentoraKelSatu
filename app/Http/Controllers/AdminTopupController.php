@@ -31,45 +31,71 @@ class AdminTopupController extends Controller
 
     public function approve(Request $request, Topup $topup)
     {
-        if ($topup->status !== Topup::STATUS_PENDING) {
-            return back()->withErrors(['topup' => 'Topup ini sudah diproses.']);
+        // Gunakan DB transaction dengan lock untuk mencegah double approval
+        try {
+            DB::transaction(function () use ($topup, $request) {
+                // Reload topup dengan lock untuk mencegah concurrent updates
+                $topupLocked = Topup::lockForUpdate()->find($topup->topup_id);
+                
+                if (!$topupLocked) {
+                    throw new \Exception('Topup tidak ditemukan.');
+                }
+
+                // Double check status setelah lock (penting untuk race condition)
+                if ($topupLocked->status !== Topup::STATUS_PENDING) {
+                    throw new \Exception('Topup ini sudah diproses.');
+                }
+
+                $statusBefore = $topupLocked->status;
+                $topupLocked->update(['status' => Topup::STATUS_APPROVED]);
+
+                $user = $topupLocked->user;
+                $user->increment('balance', $topupLocked->amount);
+
+                TopupHistory::create([
+                    'topup_id' => $topupLocked->topup_id,
+                    'approved_by' => $request->user()->user_id,
+                    'status_before' => $statusBefore,
+                    'status_after' => Topup::STATUS_APPROVED,
+                ]);
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors(['topup' => $e->getMessage()]);
         }
-
-        DB::transaction(function () use ($topup, $request) {
-            $statusBefore = $topup->status;
-            $topup->update(['status' => Topup::STATUS_APPROVED]);
-
-            $user = $topup->user;
-            $user->increment('balance', $topup->amount);
-
-            TopupHistory::create([
-                'topup_id' => $topup->topup_id,
-                'approved_by' => $request->user()->user_id,
-                'status_before' => $statusBefore,
-                'status_after' => Topup::STATUS_APPROVED,
-            ]);
-        });
 
         return back()->with('status', 'Topup berhasil disetujui. Saldo user telah ditambahkan.');
     }
 
     public function reject(Request $request, Topup $topup)
     {
-        if ($topup->status !== Topup::STATUS_PENDING) {
-            return back()->withErrors(['topup' => 'Topup ini sudah diproses.']);
+        // Gunakan DB transaction dengan lock untuk mencegah double rejection
+        try {
+            DB::transaction(function () use ($topup, $request) {
+                // Reload topup dengan lock untuk mencegah concurrent updates
+                $topupLocked = Topup::lockForUpdate()->find($topup->topup_id);
+                
+                if (!$topupLocked) {
+                    throw new \Exception('Topup tidak ditemukan.');
+                }
+
+                // Double check status setelah lock (penting untuk race condition)
+                if ($topupLocked->status !== Topup::STATUS_PENDING) {
+                    throw new \Exception('Topup ini sudah diproses.');
+                }
+
+                $statusBefore = $topupLocked->status;
+                $topupLocked->update(['status' => Topup::STATUS_REJECTED]);
+
+                TopupHistory::create([
+                    'topup_id' => $topupLocked->topup_id,
+                    'approved_by' => $request->user()->user_id,
+                    'status_before' => $statusBefore,
+                    'status_after' => Topup::STATUS_REJECTED,
+                ]);
+            });
+        } catch (\Exception $e) {
+            return back()->withErrors(['topup' => $e->getMessage()]);
         }
-
-        DB::transaction(function () use ($topup, $request) {
-            $statusBefore = $topup->status;
-            $topup->update(['status' => Topup::STATUS_REJECTED]);
-
-            TopupHistory::create([
-                'topup_id' => $topup->topup_id,
-                'approved_by' => $request->user()->user_id,
-                'status_before' => $statusBefore,
-                'status_after' => Topup::STATUS_REJECTED,
-            ]);
-        });
 
         return back()->with('status', 'Topup ditolak.');
     }

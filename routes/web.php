@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::post('reports', [ReportController::class, 'store'])->name('reports.store');
 
     Route::resource('topups', TopupController::class)->only(['index', 'create', 'store']);
+    Route::get('topups/{topup}/proof', [TopupController::class, 'showProof'])->name('topups.proof');
 
     // Redeem Codes - Dosen can create/list, Mahasiswa can claim
     Route::prefix('redeem-codes')->name('redeem-codes.')->group(function () {

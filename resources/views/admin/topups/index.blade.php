@@ -128,7 +128,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($topup->bukti_pembayaran)
-                                            <a href="{{ asset('storage/' . $topup->bukti_pembayaran) }}" target="_blank" class="text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors hover:underline">
+                                            <a href="{{ route('topups.proof', $topup) }}" target="_blank" class="text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors hover:underline">
                                                 Lihat
                                             </a>
                                         @else

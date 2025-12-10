@@ -107,6 +107,21 @@ class JobController extends Controller
         $data = $this->validateJob($request);
         $user = $request->user();
 
+        // Validasi: Jika job sudah diambil (PROGRESS), tidak boleh ubah harga
+        // Karena worker sudah setuju dengan harga tertentu
+        if ($job->status === Job::STATUS_PROGRESS && $data['price'] != $job->price) {
+            return back()->withErrors([
+                'price' => 'Tidak bisa mengubah harga job yang sedang dikerjakan. Worker sudah setuju dengan harga yang ada.',
+            ])->withInput();
+        }
+
+        // Validasi: Jika job sudah selesai atau expired, tidak bisa diubah
+        if (in_array($job->status, [Job::STATUS_DONE, Job::STATUS_EXPIRED])) {
+            return back()->withErrors([
+                'job' => 'Job yang sudah selesai atau kadaluarsa tidak bisa diubah.',
+            ])->withInput();
+        }
+
         // Jika harga naik, cek saldo cukup untuk selisihnya
         if ($data['price'] > $job->price) {
             $selisih = $data['price'] - $job->price;
@@ -149,18 +164,26 @@ class JobController extends Controller
         $this->authorize('delete', $job);
 
         $user = $request->user();
+        $jobStatus = $job->status; // Simpan status sebelum delete untuk pesan
 
         DB::transaction(function () use ($job, $user) {
+            // Validasi: Admin bisa delete kapan saja, tapi untuk non-admin hanya bisa delete jika PENDING
+            // Policy sudah handle ini, tapi double check untuk safety
+            if ($user->role !== 'admin' && $job->status !== Job::STATUS_PENDING) {
+                abort(403, 'Hanya admin yang bisa menghapus job yang sudah diambil atau selesai.');
+            }
+
             // Kembalikan saldo jika job belum selesai (PENDING atau PROGRESS)
             // Jika sudah DONE, saldo sudah terbayar ke worker, jadi tidak perlu dikembalikan
-            if (in_array($job->status, [Job::STATUS_PENDING, Job::STATUS_PROGRESS])) {
-                $user->increment('balance', $job->price);
+            // Jika sudah EXPIRED, saldo sudah dikembalikan saat expired
+            if (in_array($job->status, [Job::STATUS_PENDING, Job::STATUS_PROGRESS]) && $job->creator) {
+                $job->creator->increment('balance', $job->price);
             }
 
             $job->delete();
         });
 
-        $message = in_array($job->status, [Job::STATUS_PENDING, Job::STATUS_PROGRESS])
+        $message = in_array($jobStatus, [Job::STATUS_PENDING, Job::STATUS_PROGRESS])
             ? 'Job berhasil dihapus. Saldo telah dikembalikan.'
             : 'Job berhasil dihapus.';
 

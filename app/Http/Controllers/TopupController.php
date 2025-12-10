@@ -50,5 +50,23 @@ class TopupController extends Controller
 
         return redirect()->route('topups.index')->with('status', 'Permintaan topup berhasil dikirim. Menunggu persetujuan admin.');
     }
+
+    public function showProof(Request $request, Topup $topup)
+    {
+        $user = $request->user();
+
+        // Validasi: hanya owner topup atau admin yang bisa lihat bukti
+        if ($topup->user_id !== $user->user_id && $user->role !== 'admin') {
+            abort(403, 'Anda tidak berhak melihat bukti pembayaran ini.');
+        }
+
+        // Cek apakah file ada
+        if (!$topup->bukti_pembayaran || !Storage::disk('public')->exists($topup->bukti_pembayaran)) {
+            abort(404, 'Bukti pembayaran tidak ditemukan.');
+        }
+
+        // Return file dengan proper headers
+        return Storage::disk('public')->response($topup->bukti_pembayaran);
+    }
 }
 

@@ -28,6 +28,11 @@ class FeedbackController extends Controller
             return redirect()->route('jobs.index')->withErrors(['feedback' => 'Anda sudah memberikan rating untuk job ini.']);
         }
 
+        // Cek apakah job memiliki assignee
+        if (!$job->assigned_to) {
+            return redirect()->route('jobs.index')->withErrors(['feedback' => 'Job ini tidak memiliki worker yang bisa di-rating.']);
+        }
+
         return view('feedback.create', [
             'job' => $job->load(['assignee', 'categories']),
         ]);
