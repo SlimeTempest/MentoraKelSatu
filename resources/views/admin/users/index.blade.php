@@ -42,7 +42,7 @@
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition-colors">
+                        <button type="submit" class="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-gray-50 hover:bg-blue-500 transition-all duration-200 hover:shadow-lg">
                             Cari
                         </button>
                     </div>
@@ -95,18 +95,18 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium capitalize
-                                            {{ $user->role === 'admin' ? 'bg-purple-500/20 text-purple-300' : ($user->role === 'dosen' ? 'bg-blue-500/20 text-blue-300' : 'bg-green-500/20 text-green-300') }}">
+                                        <span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize
+                                            {{ $user->role === 'admin' ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' : ($user->role === 'dosen' ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-green-500/20 text-green-300 border-green-500/30') }}">
                                             {{ $user->role }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($user->is_suspended)
-                                            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-red-500/20 text-red-300">
+                                            <span class="inline-flex items-center rounded-full border border-red-500/30 bg-red-500/20 px-2.5 py-0.5 text-xs font-medium text-red-300">
                                                 Ditangguhkan
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 text-green-300">
+                                            <span class="inline-flex items-center rounded-full border border-green-500/30 bg-green-500/20 px-2.5 py-0.5 text-xs font-medium text-green-300">
                                                 Aktif
                                             </span>
                                         @endif
@@ -135,14 +135,14 @@
                                                 @if ($user->is_suspended)
                                                     <form id="unsuspend-form-{{ $user->user_id }}" action="{{ route('admin.users.unsuspend', $user) }}" method="POST" class="inline">
                                                         @csrf
-                                                        <button type="button" class="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-500 transition-colors" onclick="customConfirm('Aktifkan kembali akun <strong>{{ $user->name }}</strong>?', function(confirmed) { if(confirmed) document.getElementById('unsuspend-form-{{ $user->user_id }}').submit(); })">
+                                                        <button type="button" class="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-gray-50 hover:bg-green-500 transition-all duration-200 hover:shadow-lg hover:scale-105" onclick="customConfirm('Aktifkan kembali akun <strong>{{ $user->name }}</strong>?', function(confirmed) { if(confirmed) document.getElementById('unsuspend-form-{{ $user->user_id }}').submit(); })">
                                                             Aktifkan
                                                         </button>
                                                     </form>
                                                 @else
                                                     <form id="suspend-form-{{ $user->user_id }}" action="{{ route('admin.users.suspend', $user) }}" method="POST" class="inline">
                                                         @csrf
-                                                        <button type="button" class="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-500 transition-colors" onclick="customConfirm('Tangguhkan akun <strong>{{ $user->name }}</strong>? User tidak akan bisa login hingga akun diaktifkan kembali.', function(confirmed) { if(confirmed) document.getElementById('suspend-form-{{ $user->user_id }}').submit(); })">
+                                                        <button type="button" class="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-gray-50 hover:bg-red-500 transition-all duration-200 hover:shadow-lg hover:scale-105" onclick="customConfirm('Tangguhkan akun <strong>{{ $user->name }}</strong>? User tidak akan bisa login hingga akun diaktifkan kembali.', function(confirmed) { if(confirmed) document.getElementById('suspend-form-{{ $user->user_id }}').submit(); })">
                                                             Tangguhkan
                                                         </button>
                                                     </form>
@@ -156,10 +156,10 @@
                     </table>
                 </div>
 
-                <div class="border-t border-gray-700 bg-gray-700/30 px-6 py-4">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-400">
-                            Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} results
+                <div class="border-t border-gray-700 bg-gray-700/30 px-4 sm:px-6 py-3 sm:py-4">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div class="text-xs sm:text-sm text-gray-400">
+                            Menampilkan {{ $users->firstItem() ?? 0 }} sampai {{ $users->lastItem() ?? 0 }} dari {{ $users->total() }} hasil
                         </div>
                         <div>
                             {{ $users->appends(request()->query())->onEachSide(2)->links() }}
