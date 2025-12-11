@@ -1,5 +1,11 @@
 <div class="flex w-full items-center justify-between py-4 pl-8 sm:pl-12 lg:pl-16">
-    <a href="/" class="text-xl font-semibold text-blue-400 hover:text-blue-300 transition-colors">MentoraKelSatu</a>
+    <a href="/" class="flex items-center gap-2 transition-opacity duration-200 hover:opacity-80">
+        @if(file_exists(public_path('images/logo.png')))
+            <img src="{{ asset('images/logo.png') }}" alt="MENTORA" class="h-8 w-auto" style="background: transparent; mix-blend-mode: normal;">
+        @elseif(file_exists(public_path('images/logo.svg')))
+            <img src="{{ asset('images/logo.svg') }}" alt="MENTORA" class="h-8 w-auto" style="background: transparent;">
+        @endif
+    </a>
     <nav class="flex items-center gap-4 pr-8 text-sm font-medium text-gray-300 sm:pr-12 lg:pr-16">
         @auth
             @if (auth()->check() && auth()->user()->role !== 'admin')

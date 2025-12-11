@@ -6,7 +6,9 @@
 
         <div class="mb-6 rounded-lg border border-gray-600 bg-gray-700/50 p-4">
             <h3 class="font-semibold text-gray-100">{{ $job->title }}</h3>
-            <p class="mt-1 text-sm text-gray-300">Worker: <strong class="text-gray-100">{{ $job->assignee->name }}</strong></p>
+            @if ($job->assignee)
+                <p class="mt-1 text-sm text-gray-300">Worker: <strong class="text-gray-100">{{ $job->assignee->name }}</strong></p>
+            @endif
             <p class="mt-1 text-sm text-gray-300">Harga: <strong class="text-green-400">Rp {{ number_format($job->price, 0, ',', '.') }}</strong></p>
         </div>
 

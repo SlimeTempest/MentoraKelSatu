@@ -2,9 +2,15 @@
 
 @section('content')
     <div class="mx-auto max-w-2xl rounded-lg border border-gray-700 bg-gray-800 p-6 sm:p-8 shadow-lg">
-        <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-100">Buat Redeem Code</h1>
-            <p class="mt-1 text-sm text-gray-400">Buat kode redeem untuk dibagikan ke mahasiswa</p>
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-100">Buat Redeem Code</h1>
+                <p class="mt-1 text-sm text-gray-400">Buat kode redeem untuk dibagikan ke mahasiswa</p>
+            </div>
+            <div class="rounded-lg border border-green-500/30 bg-green-500/20 px-4 py-2.5">
+                <p class="text-xs text-gray-400">Saldo Anda</p>
+                <p class="text-lg font-semibold text-green-400">Rp {{ number_format(auth()->user()->balance, 0, ',', '.') }}</p>
+            </div>
         </div>
 
         <form action="{{ route('redeem-codes.store') }}" method="POST" class="space-y-6">
@@ -44,14 +50,20 @@
                 @enderror
             </div>
 
-            <div class="rounded-lg border border-indigo-500/30 bg-indigo-500/10 p-4">
+            <div class="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
                 <div class="flex items-start gap-3">
-                    <svg class="h-5 w-5 flex-shrink-0 text-indigo-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <svg class="h-5 w-5 flex-shrink-0 text-amber-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
-                    <p class="text-sm text-indigo-300">
-                        <strong class="font-semibold">Info:</strong> Redeem code akan dibuat secara otomatis dengan kode unik 8 karakter. Kode ini dapat digunakan oleh mahasiswa untuk menambah saldo mereka.
-                    </p>
+                    <div class="flex-1">
+                        <p class="text-sm text-amber-300 font-semibold mb-1">Penting:</p>
+                        <ul class="text-sm text-amber-300/90 space-y-1 list-disc list-inside">
+                            <li>Saldo Anda akan <strong>langsung dipotong</strong> sebesar jumlah yang Anda masukkan</li>
+                            <li>Redeem code akan dibuat secara otomatis dengan kode unik 8 karakter</li>
+                            <li>Kode ini dapat digunakan oleh mahasiswa untuk menambah saldo mereka</li>
+                            <li>Jika redeem code tidak digunakan sampai kadaluarsa, saldo akan dikembalikan ke akun Anda</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 

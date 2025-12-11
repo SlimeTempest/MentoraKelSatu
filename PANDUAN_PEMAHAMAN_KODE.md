@@ -1,4 +1,4 @@
-# 📚 Panduan Pemahaman Kode Project MentoraKelSatu
+# 📚 Panduan Pemahaman Kode Project MENTORA
 
 ## 🎯 Gambaran Umum Project
 
@@ -355,6 +355,80 @@ if ($user->balance < $amount) {
     return back()->withErrors(['price' => 'Saldo tidak cukup']);
 }
 ```
+
+---
+
+## ⭐ Sistem Rating & Feedback
+
+### Flow Feedback:
+
+1. **Job Selesai** → Creator bisa memberikan rating
+2. **Form Rating** → User isi rating (1-5) dan komentar (opsional)
+3. **Simpan Feedback** → Update rating worker dan simpan feedback
+4. **Tampilkan Rating** → Rating rata-rata ditampilkan di profile worker
+
+### Best Practices Feedback:
+
+#### 1. **Authorization & Validation**
+```php
+// Hanya creator job yang bisa rating
+if ($job->created_by !== $user->user_id) {
+    abort(403, 'Hanya creator job yang bisa memberikan rating.');
+}
+
+// Hanya job yang sudah selesai yang bisa di-rating
+if ($job->status !== Job::STATUS_DONE) {
+    abort(403, 'Hanya bisa rating job yang sudah selesai.');
+}
+```
+
+#### 2. **Prevent Duplicate Feedback**
+```php
+// Satu job hanya bisa dapat satu feedback (one-to-one)
+$existingFeedback = Feedback::where('job_id', $job->job_id)->first();
+if ($existingFeedback) {
+    return back()->withErrors(['feedback' => 'Anda sudah memberikan rating.']);
+}
+```
+
+#### 3. **Database Transaction**
+```php
+// Gunakan transaction untuk atomicity
+DB::transaction(function () use ($data, $job, $user) {
+    // Buat feedback
+    Feedback::create([...]);
+    
+    // Update avg_rating worker
+    $worker->updateAvgRating();
+});
+```
+
+#### 4. **Rating Calculation**
+```php
+// Method di User model untuk update rating rata-rata
+public function updateAvgRating() {
+    $avgRating = $this->feedbacksReceived()->avg('rating') ?? 0;
+    $this->update(['avg_rating' => round($avgRating, 2)]);
+}
+```
+
+#### 5. **Input Validation**
+```php
+// Validasi rating dan komentar
+$data = $request->validate([
+    'rating' => ['required', 'integer', 'min:1', 'max:5'],
+    'comment' => ['nullable', 'string', 'max:1000'],
+]);
+```
+
+### Kode Penting di `FeedbackController`:
+
+- **`create()`** - Menampilkan form rating (dengan validasi authorization)
+- **`store()`** - Menyimpan feedback (dengan transaction dan update rating)
+
+### Kode Penting di `User.php`:
+
+- **`updateAvgRating()`** - Menghitung dan update rating rata-rata dari semua feedback yang diterima
 
 ---
 

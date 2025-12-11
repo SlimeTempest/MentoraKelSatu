@@ -4,12 +4,17 @@
         <!-- Logo -->
         <div class="flex h-16 items-center justify-between border-b border-gray-700 px-6">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group transition-transform duration-200 hover:scale-105">
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 transition-all duration-200 group-hover:bg-blue-500 group-hover:shadow-lg">
-                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <span class="text-lg font-bold transition-colors duration-200 group-hover:text-blue-300">MentoraKelSatu</span>
+                @if(file_exists(public_path('images/logo.png')))
+                    <img src="{{ asset('images/logo.png') }}" alt="MENTORA" class="h-10 w-auto transition-all duration-200 group-hover:opacity-80" style="background: transparent; mix-blend-mode: normal;">
+                @elseif(file_exists(public_path('images/logo.svg')))
+                    <img src="{{ asset('images/logo.svg') }}" alt="MENTORA" class="h-10 w-auto transition-all duration-200 group-hover:opacity-80" style="background: transparent;">
+                @else
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 transition-all duration-200 group-hover:bg-blue-500 group-hover:shadow-lg">
+                        <svg class="h-5 w-5 transition-transform duration-200 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                @endif
             </a>
         </div>
 
@@ -96,6 +101,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                             </svg>
                             <span class="font-medium">Users</span>
+                        </a>
+                    </li>
+
+                    <!-- Admin Categories -->
+                    <li>
+                        <a href="{{ route('admin.categories.index') }}" class="group flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200 {{ request()->routeIs('admin.categories.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'text-gray-300 hover:bg-gray-700 hover:text-white hover:translate-x-1 hover:shadow-md' }}">
+                            <svg class="h-5 w-5 transition-transform duration-200 {{ request()->routeIs('admin.categories.*') ? 'scale-110' : 'group-hover:scale-110' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                            <span class="font-medium">Kategori</span>
                         </a>
                     </li>
 
