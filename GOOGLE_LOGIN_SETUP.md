@@ -41,7 +41,7 @@ composer require laravel/socialite
 2. Klik **Create Credentials** > **OAuth client ID**
 3. Pilih **Web application**
 4. Isi:
-    - **Name**: Nama aplikasi Anda (contoh: "MentoraKelSatu")
+    - **Name**: Nama aplikasi Anda (contoh: "MENTORA")
     - **Authorized JavaScript origins**:
         ```
         http://localhost:8000

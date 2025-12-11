@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUserController extends Controller
 {
@@ -71,5 +72,51 @@ class AdminUserController extends Controller
         $user->update(['is_suspended' => false]);
 
         return back()->with('status', "✅ Akun <strong>{$user->name}</strong> berhasil diaktifkan kembali. User sekarang dapat login.");
+    }
+
+    /**
+     * Menampilkan form untuk membuat admin baru
+     */
+    public function create(Request $request)
+    {
+        if ($request->user()->role !== 'admin') {
+            abort(403, 'This action is unauthorized.');
+        }
+
+        return view('admin.users.create');
+    }
+
+    /**
+     * Menyimpan admin baru
+     */
+    public function store(Request $request)
+    {
+        if ($request->user()->role !== 'admin') {
+            abort(403, 'This action is unauthorized.');
+        }
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        // Generate recovery code (8 karakter alphanumeric)
+        $recoveryCode = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+
+        User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role' => 'admin',
+            'recovery_code' => $recoveryCode,
+            'balance' => 0,
+            'avg_rating' => 0,
+            'is_suspended' => false,
+        ]);
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('status', "✅ Admin baru <strong>{$data['name']}</strong> berhasil dibuat.");
     }
 }

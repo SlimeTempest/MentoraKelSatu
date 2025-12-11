@@ -79,6 +79,19 @@
                                                 <div class="space-y-1.5">
                                                     <p class="font-semibold text-gray-100 group-hover:text-white transition-colors">{{ $job->title }}</p>
                                                     <p class="text-xs text-gray-400 line-clamp-1">{{ Str::limit($job->description, 60) }}</p>
+                                                    @if ($job->feedback && $job->feedback->comment)
+                                                        <div class="mt-2 rounded-lg border border-gray-600/50 bg-gray-700/30 p-2.5">
+                                                            <div class="flex items-center gap-2 mb-1.5">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
+                                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                                </svg>
+                                                                <span class="text-xs font-semibold text-yellow-400">{{ $job->feedback->rating }}/5</span>
+                                                                <span class="text-xs text-gray-500">•</span>
+                                                                <span class="text-xs text-gray-400">Feedback</span>
+                                                            </div>
+                                                            <p class="text-xs text-gray-300 italic line-clamp-2">"{{ Str::limit($job->feedback->comment, 80) }}"</p>
+                                                        </div>
+                                                    @endif
                                                     <div class="flex flex-wrap items-center gap-2 lg:hidden">
                                                         <span class="text-xs text-gray-500">By: 
                                                             <a href="{{ route('users.profile.show', $job->creator) }}"
@@ -404,6 +417,19 @@
                                                 <div class="space-y-1.5">
                                                     <p class="font-semibold text-gray-100 group-hover:text-white transition-colors">{{ $job->title }}</p>
                                                     <p class="text-xs text-gray-400 line-clamp-1">{{ Str::limit($job->description, 80) }}</p>
+                                                    @if ($job->feedback && $job->feedback->comment)
+                                                        <div class="mt-2 rounded-lg border border-gray-600/50 bg-gray-700/30 p-2.5">
+                                                            <div class="flex items-center gap-2 mb-1.5">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" class="text-yellow-400">
+                                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                                </svg>
+                                                                <span class="text-xs font-semibold text-yellow-400">{{ $job->feedback->rating }}/5</span>
+                                                                <span class="text-xs text-gray-500">•</span>
+                                                                <span class="text-xs text-gray-400">Feedback diberikan</span>
+                                                            </div>
+                                                            <p class="text-xs text-gray-300 italic line-clamp-2">"{{ Str::limit($job->feedback->comment, 100) }}"</p>
+                                                        </div>
+                                                    @endif
                                                     <div class="flex flex-wrap items-center gap-2 sm:hidden">
                                                         @php
                                                             $statusColors = [
@@ -487,6 +513,15 @@
                                                             </svg>
                                                             <span class="hidden sm:inline">Rating</span>
                                                         </a>
+                                                    @endif
+                                                    @if ($job->feedback)
+                                                        <div class="group inline-flex items-center gap-1.5 rounded-lg border border-green-500/50 bg-green-500/20 px-3 py-1.5 text-xs font-semibold text-green-300"
+                                                            title="Rating: {{ $job->feedback->rating }}/5">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                            </svg>
+                                                            <span class="hidden sm:inline">{{ $job->feedback->rating }}/5</span>
+                                                        </div>
                                                     @endif
                                                     @if ($job->status === \App\Models\Job::STATUS_DONE && $job->assignee)
                                                         <a href="{{ route('reports.create', ['job_id' => $job->job_id]) }}"

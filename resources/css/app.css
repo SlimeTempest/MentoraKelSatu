@@ -77,3 +77,14 @@ header button img {
 ::-webkit-scrollbar-thumb:hover {
     background: #6b7280;
 }
+
+/* Logo Styling - Pastikan background transparan terlihat */
+img[src*="logo.png"] {
+    background: transparent !important;
+    mix-blend-mode: normal;
+    object-fit: contain;
+    /* Pastikan tidak ada background color yang mengganggu */
+    background-color: transparent !important;
+    /* Jika logo punya background putih, gunakan mix-blend-mode untuk menghapusnya */
+    /* mix-blend-mode: screen; */ /* Uncomment jika perlu hapus background putih */
+}

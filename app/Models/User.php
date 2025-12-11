@@ -101,9 +101,22 @@ class User extends Authenticatable
         return $this->hasMany(Report::class, 'reported_user', 'user_id');
     }
 
-    public function updateAvgRating()
+    /**
+     * Update rating rata-rata dari semua feedback yang diterima
+     * 
+     * BEST PRACTICES:
+     * - Hitung ulang dari database untuk memastikan akurasi
+     * - Round ke 2 desimal untuk konsistensi tampilan
+     * - Handle null dengan default value 0
+     * 
+     * @return void
+     */
+    public function updateAvgRating(): void
     {
+        // BEST PRACTICE: Hitung ulang dari database untuk akurasi
         $avgRating = $this->feedbacksReceived()->avg('rating') ?? 0;
+        
+        // BEST PRACTICE: Round ke 2 desimal untuk konsistensi
         $this->update(['avg_rating' => round($avgRating, 2)]);
     }
 

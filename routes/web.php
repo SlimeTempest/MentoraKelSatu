@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminCategoryController;
 use App\Http\Controllers\AdminReportController;
 use App\Http\Controllers\AdminSettingController;
 use App\Http\Controllers\AdminTopupController;
@@ -85,7 +86,11 @@ Route::middleware('auth')->group(function () {
         Route::put('reports/{report}/status', [AdminReportController::class, 'updateStatus'])->name('reports.update-status');
 
         Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::get('users/create', [AdminUserController::class, 'create'])->name('users.create');
+        Route::post('users', [AdminUserController::class, 'store'])->name('users.store');
         Route::post('users/{user}/suspend', [AdminUserController::class, 'suspend'])->name('users.suspend');
         Route::post('users/{user}/unsuspend', [AdminUserController::class, 'unsuspend'])->name('users.unsuspend');
+
+        Route::resource('categories', AdminCategoryController::class)->except(['show']);
     });
 });

@@ -19,7 +19,7 @@ class JobController extends Controller
         $user = $request->user();
 
         if ($user->role === 'admin') {
-            $allJobs = Job::with(['creator', 'assignee', 'categories'])
+            $allJobs = Job::with(['creator', 'assignee', 'categories', 'feedback'])
                 ->latest()
                 ->paginate(10);
 

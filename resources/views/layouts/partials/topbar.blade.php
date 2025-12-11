@@ -36,12 +36,11 @@
                         <span class="text-sm sm:text-base font-bold text-white">{{ strtoupper(substr($currentUser->name ?? 'U', 0, 1)) }}</span>
                     @endif
                 </div>
-                @if ($currentUser->role === 'admin' || $currentUser->role === 'dosen')
-                    <div class="block text-left flex-shrink-0 min-w-0" style="max-width: 150px; flex-shrink: 0;">
-                        <p class="text-xs sm:text-sm font-semibold text-white truncate leading-tight">{{ $currentUser->name ?? 'User' }}</p>
-                        <p class="text-xs text-gray-400 capitalize truncate leading-tight">{{ $currentUser->role ?? 'user' }}</p>
-                    </div>
-                @endif
+                <!-- Tampilkan nama dan role untuk semua role (mengikuti referensi dosen) -->
+                <div class="block text-left flex-shrink-0 min-w-0" style="max-width: 150px; flex-shrink: 0;">
+                    <p class="text-xs sm:text-sm font-semibold text-white truncate leading-tight">{{ $currentUser->name ?? 'User' }}</p>
+                    <p class="text-xs text-gray-400 capitalize truncate leading-tight">{{ $currentUser->role ?? 'user' }}</p>
+                </div>
                 <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 flex-shrink-0 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
