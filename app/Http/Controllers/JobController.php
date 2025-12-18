@@ -18,27 +18,97 @@ class JobController extends Controller
 
         $user = $request->user();
 
+        // Handle admin view with optional filters
         if ($user->role === 'admin') {
-            $allJobs = Job::with(['creator', 'assignee', 'categories', 'feedback'])
-                ->latest()
-                ->paginate(10);
+            $query = Job::with(['creator', 'assignee', 'categories', 'feedback'])->latest();
+
+            // Filters
+            if ($request->filled('search')) {
+                $search = strtolower($request->input('search'));
+                $query->where(function ($q) use ($search) {
+                    $q->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"])
+                        ->orWhereRaw('LOWER(description) LIKE ?', ["%{$search}%"])
+                        ->orWhereHas('creator', function ($q2) use ($search) {
+                            $q2->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                        });
+                });
+            }
+
+            if ($request->filled('categories')) {
+                // sanitize category ids
+                $categories = array_map('intval', (array) $request->input('categories'));
+                $query->whereHas('categories', function ($q) use ($categories) {
+                    // qualify column to avoid ambiguity between categories and pivot table
+                    $q->whereIn('categories.category_id', $categories);
+                });
+            }
+
+            if ($request->filled('min_price')) {
+                $min = (float) $request->input('min_price');
+                $query->where('price', '>=', $min);
+            }
+            if ($request->filled('max_price')) {
+                $max = (float) $request->input('max_price');
+                $query->where('price', '<=', $max);
+            }
+
+            $allJobs = $query->paginate(10)->appends($request->except('page'));
+
+            $categories = Category::orderBy('name')->get();
 
             return view('jobs.index', [
                 'allJobs' => $allJobs,
                 'isAdmin' => true,
+                'categories' => $categories,
+                'filters' => $request->only(['search', 'categories', 'min_price', 'max_price']),
             ]);
         }
 
+        // User available jobs with filters
         $availableJobsQuery = Job::with(['creator', 'categories'])
             ->available()
             ->where('created_by', '!=', $user->user_id)
             ->orderByDesc('created_at');
 
+        // Apply same filters for users
+        if ($request->filled('search')) {
+            $search = strtolower($request->input('search'));
+            $availableJobsQuery->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$search}%"])
+                    ->orWhereHas('creator', function ($q2) use ($search) {
+                        $q2->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                    });
+            });
+        }
+
+        if ($request->filled('categories')) {
+            // sanitize category ids
+            $categoriesFilter = array_map('intval', (array) $request->input('categories'));
+            $availableJobsQuery->whereHas('categories', function ($q) use ($categoriesFilter) {
+                // qualify column to avoid ambiguity between categories and pivot table
+                $q->whereIn('categories.category_id', $categoriesFilter);
+            });
+        }
+
+        if ($request->filled('min_price')) {
+            $min = (float) $request->input('min_price');
+            $availableJobsQuery->where('price', '>=', $min);
+        }
+        if ($request->filled('max_price')) {
+            $max = (float) $request->input('max_price');
+            $availableJobsQuery->where('price', '<=', $max);
+        }
+
+        $categories = Category::orderBy('name')->get();
+
         return view('jobs.index', [
-            'availableJobs' => $availableJobsQuery->paginate(10),
+            'availableJobs' => $availableJobsQuery->paginate(10)->appends($request->except('page')),
             'myJobs' => $user->jobsCreated()->with(['assignee', 'categories', 'feedback'])->latest()->paginate(10),
             'assignedJobs' => $user->jobsAssigned()->with(['creator', 'categories'])->latest()->paginate(10),
             'isAdmin' => false,
+            'categories' => $categories,
+            'filters' => $request->only(['search', 'categories', 'min_price', 'max_price']),
         ]);
     }
 
@@ -134,7 +204,7 @@ class JobController extends Controller
 
         DB::transaction(function () use ($job, $data, $user) {
             $hargaLama = $job->price;
-            
+
             $job->update([
                 'title' => $data['title'],
                 'description' => $data['description'],

@@ -54,6 +54,90 @@
                         <p class="text-sm text-gray-500">Job akan muncul di sini ketika user membuat job baru.</p>
                     </div>
                 @else
+                    <div class="p-4 border-b border-gray-700/50">
+                        <form action="{{ route('jobs.index') }}" method="GET"
+                            class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}"
+                                    placeholder="Cari judul/creator..."
+                                    class="rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                <div x-data='{
+                                    open: false,
+                                    query: "",
+                                    items: @json($categories->map(fn($c) => ['id' => (int) $c->category_id, 'name' => $c->name])),
+                                    selected: @json(array_map('intval', (array) ($filters['categories'] ?? []))),
+                                    toggle(id) {
+                                        if (!this.isSelected(id)) this.selected.push(id);
+                                        else this.selected = this.selected.filter(i => i !== id);
+                                    },
+                                    isSelected(id) { return this.selected.includes(id); },
+                                    filtered() { return this.items.filter(i => i.name.toLowerCase().includes(this.query.toLowerCase())); }
+                                }'
+                                    class="relative">
+                                    <button type="button" @click="open = !open" @keydown.escape="open = false"
+                                        class="w-full text-left rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white flex items-center gap-2">
+                                        <div class="flex-1 flex flex-wrap gap-1">
+                                            <template x-if="selected.length == 0">
+                                                <span class="text-gray-400">Pilih kategori</span>
+                                            </template>
+                                            <template x-for="id in selected" :key="id">
+                                                <span
+                                                    class="inline-flex items-center gap-1 bg-indigo-600/30 text-indigo-100 px-2 py-0.5 rounded-full text-xs">
+                                                    <span x-text="items.find(i => i.id == id)?.name"></span>
+                                                    <button type="button" @click.stop="toggle(id)"
+                                                        class="ml-1 text-indigo-200 hover:text-white">&times;</button>
+                                                </span>
+                                            </template>
+                                        </div>
+                                        <svg class="h-4 w-4 text-gray-300" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="open" x-cloak @click.away="open = false"
+                                        class="absolute z-50 mt-2 w-full max-h-56 overflow-auto rounded-md border border-gray-700 bg-gray-800 p-2 shadow-lg">
+                                        <input type="text" x-model="query" placeholder="Cari kategori..."
+                                            class="w-full rounded-md bg-gray-700 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                        <ul class="mt-2 space-y-1">
+                                            <template x-for="item in filtered()" :key="item.id">
+                                                <li>
+                                                    <label
+                                                        class="flex items-center gap-2 p-2 rounded hover:bg-gray-700 cursor-pointer">
+                                                        <input type="checkbox" :checked="isSelected(item.id)"
+                                                            @click.stop="toggle(item.id)"
+                                                            class="h-4 w-4 rounded bg-gray-700 text-indigo-500">
+                                                        <span x-text="item.name" class="text-sm text-gray-200"></span>
+                                                        <span class="ml-auto text-xs text-gray-400"
+                                                            x-show="isSelected(item.id)">Dipilih</span>
+                                                    </label>
+                                                </li>
+                                            </template>
+                                            <div x-show="filtered().length == 0" class="p-2 text-sm text-gray-400">Tidak ada
+                                                kategori</div>
+                                        </ul>
+                                    </div>
+
+                                    <template x-for="id in selected" :key="id">
+                                        <input type="hidden" name="categories[]" :value="id">
+                                    </template>
+                                </div>
+                                <input type="number" name="min_price" min="0"
+                                    value="{{ $filters['min_price'] ?? '' }}" placeholder="Min"
+                                    class="rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white">
+                                <input type="number" name="max_price" min="0"
+                                    value="{{ $filters['max_price'] ?? '' }}" placeholder="Max"
+                                    class="rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="submit"
+                                    class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500">Filter</button>
+                                <a href="{{ route('jobs.index') }}"
+                                    class="rounded-lg border border-gray-600 px-3 py-2 text-sm text-gray-300">Reset</a>
+                            </div>
+                        </form>
+                    </div>
                     <div class="overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-700/50">
@@ -100,8 +184,8 @@
                                                             class="mt-2 rounded-lg border border-gray-600/50 bg-gray-700/30 p-2.5">
                                                             <div class="flex items-center gap-2 mb-1.5">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12"
-                                                                    height="12" viewBox="0 0 24 24" fill="currentColor"
-                                                                    class="text-yellow-400">
+                                                                    height="12" viewBox="0 0 24 24"
+                                                                    fill="currentColor" class="text-yellow-400">
                                                                     <polygon
                                                                         points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                                                 </svg>
@@ -366,46 +450,108 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- filter --}}
                 {{-- <div class="rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-lg">
                     <form action="{{ route('jobs.index') }}" method="GET" class="space-y-4">
                         <div class="grid gap-4 md:grid-cols-4">
                             <div>
-                                <label class="mb-1 block text-xs font-medium text-gray-400">Cari Nama</label>
-                                <input type="text" name="search" value="{{ $search }}"
-                                    placeholder="Cari nama user..."
+                                <label class="mb-1 block text-xs font-medium text-gray-400">Cari</label>
+                                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}"
+                                    placeholder="Cari judul, deskripsi atau pembuat..."
                                     class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
+
                             <div>
-                                <label class="mb-1 block text-xs font-medium text-gray-400">Role</label>
-                                <select name="role"
-                                    class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    <option value="all" {{ $roleFilter === 'all' ? 'selected' : '' }}>Semua</option>
-                                    <option value="mahasiswa" {{ $roleFilter === 'mahasiswa' ? 'selected' : '' }}>
-                                        Mahasiswa</option>
-                                    <option value="dosen" {{ $roleFilter === 'dosen' ? 'selected' : '' }}>Dosen</option>
-                                    <option value="admin" {{ $roleFilter === 'admin' ? 'selected' : '' }}>Admin</option>
-                                </select>
+                                <label class="mb-1 block text-xs font-medium text-gray-400">Kategori</label>
+                                <div x-data='{
+                                    open: false,
+                                    query: "",
+                                    items: @json($categories->map(fn($c) => ['id' => (int) $c->category_id, 'name' => $c->name])),
+                                    selected: @json(array_map('intval', (array) ($filters['categories'] ?? []))),
+                                    toggle(id) {
+                                        if (!this.isSelected(id)) this.selected.push(id);
+                                        else this.selected = this.selected.filter(i => i !== id);
+                                    },
+                                    isSelected(id) { return this.selected.includes(id); },
+                                    filtered() { return this.items.filter(i => i.name.toLowerCase().includes(this.query.toLowerCase())); }
+                                }'
+                                    class="relative">
+                                    <button type="button" @click="open = !open" @keydown.escape="open = false"
+                                        class="w-full text-left rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white flex items-center gap-2">
+                                        <div class="flex-1 flex flex-wrap gap-1">
+                                            <template x-if="selected.length == 0">
+                                                <span class="text-gray-400">Pilih kategori</span>
+                                            </template>
+                                            <template x-for="id in selected" :key="id">
+                                                <span
+                                                    class="inline-flex items-center gap-1 bg-indigo-600/30 text-indigo-100 px-2 py-0.5 rounded-full text-xs">
+                                                    <span x-text="items.find(i => i.id == id)?.name"></span>
+                                                    <button type="button" @click.stop="toggle(id)"
+                                                        class="ml-1 text-indigo-200 hover:text-white">&times;</button>
+                                                </span>
+                                            </template>
+                                        </div>
+                                        <svg class="h-4 w-4 text-gray-300" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="open" x-cloak @click.away="open = false"
+                                        class="absolute z-50 mt-2 w-full max-h-56 overflow-auto rounded-md border border-gray-700 bg-gray-800 p-2 shadow-lg">
+                                        <input type="text" x-model="query" placeholder="Cari kategori..."
+                                            class="w-full rounded-md bg-gray-700 px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                        <ul class="mt-2 space-y-1">
+                                            <template x-for="item in filtered()" :key="item.id">
+                                                <li>
+                                                    <label
+                                                        class="flex items-center gap-2 p-2 rounded hover:bg-gray-700 cursor-pointer">
+                                                        <input type="checkbox" :checked="isSelected(item.id)"
+                                                            @click.stop="toggle(item.id)"
+                                                            class="h-4 w-4 rounded bg-gray-700 text-indigo-500">
+                                                        <span x-text="item.name" class="text-sm text-gray-200"></span>
+                                                        <span class="ml-auto text-xs text-gray-400"
+                                                            x-show="isSelected(item.id)">Dipilih</span>
+                                                    </label>
+                                                </li>
+                                            </template>
+                                            <div x-show="filtered().length == 0" class="p-2 text-sm text-gray-400">Tidak
+                                                ada kategori</div>
+                                        </ul>
+                                    </div>
+
+                                    <template x-for="id in selected" :key="id">
+                                        <input type="hidden" name="categories[]" :value="id">
+                                    </template>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-400">(Tekan ctrl/command untuk memilih lebih dari satu)
+                                </p>
                             </div>
+
                             <div>
-                                <label class="mb-1 block text-xs font-medium text-gray-400">Status</label>
-                                <select name="suspended"
-                                    class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    <option value="all" {{ $suspendedFilter === 'all' ? 'selected' : '' }}>Semua
-                                    </option>
-                                    <option value="0" {{ $suspendedFilter === '0' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="1" {{ $suspendedFilter === '1' ? 'selected' : '' }}>Ditangguhkan
-                                    </option>
-                                </select>
+                                <label class="mb-1 block text-xs font-medium text-gray-400">Price Range</label>
+                                <div class="flex gap-2">
+                                    <input type="number" name="min_price" min="0"
+                                        value="{{ $filters['min_price'] ?? '' }}" placeholder="Min"
+                                        class="w-1/2 rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <input type="number" name="max_price" min="0"
+                                        value="{{ $filters['max_price'] ?? '' }}" placeholder="Max"
+                                        class="w-1/2 rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                </div>
                             </div>
-                            <div class="flex items-end">
+
+                            <div class="flex items-end gap-2">
                                 <button type="submit"
-                                    class="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-gray-50 hover:bg-blue-500 transition-all duration-200 hover:shadow-lg">
-                                    Cari
-                                </button>
+                                    class="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-gray-50 hover:bg-blue-500 transition-all duration-200 hover:shadow-lg">Cari</button>
+                                <a href="{{ route('jobs.index') }}"
+                                    class="w-full inline-block text-center rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Reset</a>
                             </div>
                         </div>
                     </form>
                 </div> --}}
+
                 <div class="p-6">
                     @if ($availableJobs->isEmpty())
                         <div class="flex flex-col items-center justify-center py-12 text-center">
